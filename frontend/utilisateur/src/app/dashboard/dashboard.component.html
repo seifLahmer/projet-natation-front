@@ -1,0 +1,52 @@
+<div class="dashboard-container">
+    <!-- Header avec boutons -->
+    <header class="dashboard-header">
+        <div class="header-content">
+          <div class="logo-container">
+            <img src="assets/images/logo-federation.png" alt="Logo" class="logo">
+            <h1>Fédération Tunisienne de Natation</h1>
+          </div>
+          <div class="auth-buttons">
+            <button routerLink="/register" class="btn btn-register">INSCRIPTION</button>
+            <button routerLink="/login" class="btn btn-login">CONNEXION</button>
+          </div>
+        </div>
+      </header>
+  
+    <!-- Diaporama automatique -->
+    <div class="slideshow-container">
+        <div *ngFor="let image of images; let i = index" 
+             class="slide fade" 
+             [class.active]="currentIndex === i"
+             [style.background-image]="'url(' + image + ')'">
+          <div class="slide-content">
+            <h2>Rejoignez la communauté aquatique</h2>
+          </div>
+        </div>
+      </div>
+  
+    <!-- Contenu principal -->
+    <main class="main-content">
+      <section class="features-section">
+        <div class="feature-card">
+          <i class="fas fa-trophy"></i>
+          <h3>Compétitions</h3>
+          <p>Participez aux championnats nationaux et internationaux</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-swimmer"></i>
+          <h3>Formation</h3>
+          <p>Programmes d'entraînement pour tous les niveaux</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-users"></i>
+          <h3>Communauté</h3>
+          <p>Rejoignez notre réseau de nageurs passionnés</p>
+        </div>
+      </section>
+    </main>
+  
+    <footer class="main-footer">
+      <p>© 2023 Fédération Tunisienne de Natation. Tous droits réservés.</p>
+    </footer>
+  </div>

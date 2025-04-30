@@ -1,0 +1,226 @@
+/* Variables */
+:root {
+    --primary-color: #0066cc;
+    --secondary-color: #00a0e9;
+    --dark-color: #003366;
+    --light-color: #f8fafc;
+    --error-color: #e74c3c;
+    --success-color: #2ecc71;
+  }
+  
+  /* Structure */
+  .auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+    padding: 2rem;
+  }
+  
+  .auth-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    overflow: hidden;
+  }
+  
+  .auth-header {
+    text-align: center;
+    padding: 2.5rem 2rem 1.5rem;
+    background: var(--dark-color);
+    color: white;
+  }
+  
+  .auth-logo {
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+  
+  .auth-header h2 {
+    margin: 0.5rem 0;
+    font-size: 1.5rem;
+  }
+  
+  .auth-header p {
+    opacity: 0.8;
+    font-size: 0.9rem;
+  }
+  
+  /* Formulaire */
+  .auth-form {
+    padding: 2rem;
+  }
+  
+  .form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dark-color);
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s;
+  }
+  
+  .form-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+    outline: none;
+  }
+  
+  .form-group i {
+    position: absolute;
+    left: 15px;
+    top: 40px;
+    color: #777;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: -20px;
+    top: 38px;
+    cursor: pointer;
+    color: #777;
+    z-index: 1;
+  }
+  
+  .password-group {
+    position: relative;
+  }
+  .auth-btn {
+    position: relative;
+    z-index: 2;
+    /* ... autres styles existants ... */
+  }
+  
+  /* Ajuster le padding du champ mot de passe */
+  .password-group input {
+    padding-right: 40px;
+    position: relative;
+    z-index: 0;
+  }
+
+  /* Options */
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .remember-me input {
+    margin-right: 8px;
+  }
+  
+  .forgot-password {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+  
+  /* Captcha */
+  .captcha-container {
+    margin-bottom: 1.5rem;
+  }
+  
+  .captcha-box {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .captcha-box span {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    background: #f1f1f1;
+    padding: 8px 15px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+  .captcha-box button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+    font-size: 1rem;
+  }
+  
+  /* Bouton */
+  .auth-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .auth-btn:hover {
+    background: var(--dark-color);
+  }
+  
+  .auth-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Footer */
+  .auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .auth-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .auth-footer a:hover {
+    text-decoration: underline;
+  }
