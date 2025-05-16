@@ -1,47 +1,47 @@
-<div class="auth-container"> 
-    <div class="auth-card">
-      <div class="auth-header">
-        <img src="assets/images/logo-federation.png" alt="Logo Fédération" class="auth-logo">
-        <h2 style="color: #0066cc;">Connexion à votre espace</h2>
-        <p style="color: #0066cc;">Accédez à votre compte fédération</p>
-      </div>
-  
-      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <!-- Email -->
-        <div class="form-group">
-          <label for="email">Adresse Email</label>
-          <input type="email" id="email" formControlName="email" placeholder="votre@email.com">
-          <i class="fas fa-envelope"></i>
-        </div>
-  
-        <!-- Mot de passe -->
-        <div class="form-group password-group">
-          <label for="password">Mot de passe</label>
-          <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" placeholder="••••••••">
-          <i class="fas fa-lock"></i>
-          <span class="toggle-password" (click)="togglePassword()" [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'">
-          </span>
-        </div>
-  
-        <!-- Options -->
-        <div class="form-options">
-          <label class="remember-me">
-            <input type="checkbox" formControlName="rememberMe">
-            <span>Se souvenir de moi</span>
-          </label>
-          <a routerLink="/reset-password" class="forgot-password">Mot de passe oublié ?</a>
-        </div>
-  
-        <!-- Bouton Connexion -->
-        <button type="submit" class="auth-btn" [disabled]="!loginForm.valid">
-          <span *ngIf="!loading">Connexion</span>
-          <span *ngIf="loading" class="spinner"></span>
-        </button>
-  
-        <!-- Lien Inscription -->
-        <div class="auth-footer">
-          <p>Nouveau membre ? <a routerLink="/register">Créer un compte</a></p>
-        </div>
-      </form>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <img src="assets/images/logo-federation.png" alt="Logo" class="auth-logo">
+      <h2>Connexion Administrateur</h2>
     </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" formControlName="email" placeholder="admin@admin.com">
+        <div *ngIf="f['email'].touched && f['email'].errors" class="error-message">
+          <div *ngIf="f['email'].errors?.['required']">Email requis</div>
+          <div *ngIf="f['email'].errors?.['email']">Email invalide</div>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input [type]="showPassword ? 'text' : 'password'" id="password" 
+               formControlName="password" placeholder="••••••••">
+        <span (click)="togglePassword()" class="toggle-password">
+          {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+        </span>
+        <div *ngIf="f['password'].touched && f['password'].errors" class="error-message">
+          <div *ngIf="f['password'].errors?.['required']">Mot de passe requis</div>
+          <div *ngIf="f['password'].errors?.['minlength']">
+            Minimum 6 caractères
+          </div>
+        </div>
+      </div>
+
+      <!-- Error message -->
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Submit button -->
+      <button type="submit" class="btn btn-primary" [disabled]="loading || loginForm.invalid">
+        <span *ngIf="!loading">Connexion</span>
+        <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+      </button>
+    </form>
   </div>
+</div>

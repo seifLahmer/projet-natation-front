@@ -1,23 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../_services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
+export class LoginComponent {
+  loginForm: FormGroup;
   loading = false;
   showPassword = false;
+  errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder) {}
-
-  ngOnInit(): void {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rememberMe: [false]
+      email: ['admin@admin.com', [Validators.required, Validators.email]],
+      password: ['admin123', [Validators.required]]
     });
   }
 
@@ -26,11 +30,26 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
-    
+    if (this.loginForm.invalid) {
+      return;
+    }
+
     this.loading = true;
-    // Ici vous ajouteriez votre logique d'authentification
-    console.log('Formulaire soumis', this.loginForm.value);
-    setTimeout(() => this.loading = false, 2000);
+    this.errorMessage = null;
+
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe({
+      next: () => {
+        this.loading = false;
+        // La redirection est gérée dans le AuthService
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err;
+      }
+    });
   }
+
+  get f() { return this.loginForm.controls; }
 }
