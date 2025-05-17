@@ -1,0 +1,640 @@
+<!-- Hero section avec carousel d'images -->
+<div class="hero-section position-relative">
+    <div class="hero-image-container">
+        <img [src]="currentImageUrl" class="hero-image" alt="Image natation" />
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <i class="fas fa-trophy text-warning me-3"></i>
+                Compétitions de Natation
+            </h1>
+            <p class="hero-subtitle">Découvrez et planifiez vos compétitions</p>
+        </div>
+    </div>
+    <!-- Indicateurs de carousel -->
+    <div class="carousel-indicators">
+        <button *ngFor="let img of imageUrls; let i = index" [class.active]="i === imageIndex"
+            (click)="setCurrentImage(i)">
+        </button>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Section de filtres avec header moderne -->
+            <div class="card shadow-sm border-0 mb-4 sticky-filters">
+                <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-filter text-info me-2"></i>Filtres et recherche
+                    </h5>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-sm btn-outline-info" (click)="applyFilters()">
+                            <i class="fas fa-search me-1"></i>Appliquer
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="resetFilters()">
+                            <i class="fas fa-undo me-1"></i>Reset
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog me-1"></i>Options
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <h6 class="dropdown-header">Éléments par page</h6>
+                                </li>
+                                <li><a class="dropdown-item" (click)="changeItemsPerPage(5)"
+                                        [class.active]="itemsPerPage === 5">5 par page</a></li>
+                                <li><a class="dropdown-item" (click)="changeItemsPerPage(10)"
+                                        [class.active]="itemsPerPage === 10">10 par page</a></li>
+                                <li><a class="dropdown-item" (click)="changeItemsPerPage(20)"
+                                        [class.active]="itemsPerPage === 20">20 par page</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" (click)="toggleViewMode()">
+                                        <i class="fas fa-th-large me-2"></i>Mode {{ isCardView ? 'Liste' : 'Cartes' }}
+                                    </a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <!-- Recherche générale -->
+                        <div class="col-md-4">
+                            <label for="searchTerm" class="form-label">
+                                <i class="fas fa-search text-primary me-2"></i>Recherche générale
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="searchTerm" [(ngModel)]="searchTerm"
+                                    (input)="onSearchChange()" placeholder="Rechercher une compétition...">
+                                <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()"
+                                    [disabled]="!searchTerm">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filtre par genre -->
+                        <div class="col-md-4">
+                            <label for="selectedGender" class="form-label">
+                                <i class="fas fa-venus-mars text-success me-2"></i>Genre
+                            </label>
+                            <select class="form-select" id="selectedGender" [(ngModel)]="selectedGender">
+                                <option value="">Tous les genres</option>
+                                <option value="DAMES">Dames</option>
+                                <option value="MESSIEURS">Messieurs</option>
+                                <option value="MIXTE">Mixte</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtre par style -->
+                        <div class="col-md-4">
+                            <label for="selectedStyle" class="form-label">
+                                <i class="fas fa-swimmer text-info me-2"></i>Style de nage
+                            </label>
+                            <select class="form-select" id="selectedStyle" [(ngModel)]="selectedStyle">
+                                <option value="">Tous les styles</option>
+                                <option value="LIBRE">Nage libre</option>
+                                <option value="DOS">Dos crawlé</option>
+                                <option value="BRASSE">Brasse</option>
+                                <option value="PAPILLON">Papillon</option>
+                                <option value="NAGES">4 nages</option>
+                                <option value="RELAIS">Relais</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-2">
+                        <!-- Filtre par distance -->
+                        <div class="col-md-4">
+                            <label for="selectedDistance" class="form-label">
+                                <i class="fas fa-ruler-horizontal text-warning me-2"></i>Distance
+                            </label>
+                            <select class="form-select" id="selectedDistance" [(ngModel)]="selectedDistance">
+                                <option value="">Toutes les distances</option>
+                                <optgroup label="Distances courtes">
+                                    <option value="50 M">50 mètres</option>
+                                    <option value="100 M">100 mètres</option>
+                                </optgroup>
+                                <optgroup label="Distances moyennes">
+                                    <option value="200 M">200 mètres</option>
+                                    <option value="400 M">400 mètres</option>
+                                </optgroup>
+                                <optgroup label="Distances longues">
+                                    <option value="800 M">800 mètres</option>
+                                    <option value="1500 M">1500 mètres</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <!-- Filtre par niveau -->
+                        <div class="col-md-4">
+                            <label for="selectedLevel" class="form-label">
+                                <i class="fas fa-medal text-danger me-2"></i>Niveau
+                            </label>
+                            <select class="form-select" id="selectedLevel" [(ngModel)]="selectedLevel">
+                                <option value="">Tous les niveaux</option>
+                                <option value="REGIONAL">Régional</option>
+                                <option value="NATIONAL">National</option>
+                                <option value="INTERNATIONAL">International</option>
+                                <option value="JUNIOR">Junior</option>
+                                <option value="SENIOR">Senior</option>
+                            </select>
+                        </div>
+
+                        <!-- Tri -->
+                        <div class="col-md-4">
+                            <label for="sortBy" class="form-label">
+                                <i class="fas fa-sort text-primary me-2"></i>Trier par
+                            </label>
+                            <select class="form-select" id="sortBy" [(ngModel)]="sortBy" (change)="onSortChange()">
+                                <option value="name-asc">Nom (A-Z)</option>
+                                <option value="name-desc">Nom (Z-A)</option>
+                                <option value="distance-asc">Distance (croissante)</option>
+                                <option value="distance-desc">Distance (décroissante)</option>
+                                <option value="style">Style de nage</option>
+                                <option value="gender">Genre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Statistiques rapides -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="badge bg-info p-2">
+                                    <i class="fas fa-list me-1"></i>
+                                    {{ getFilteredCount() }}/{{ competitionCards.length }} compétitions
+                                </div>
+                                <div class="badge bg-success p-2">
+                                    <i class="fas fa-venus me-1"></i>
+                                    {{ getCountByGender('DAMES') }} dames
+                                </div>
+                                <div class="badge bg-warning p-2">
+                                    <i class="fas fa-mars me-1"></i>
+                                    {{ getCountByGender('MESSIEURS') }} messieurs
+                                </div>
+                                <div class="badge bg-primary p-2">
+                                    <i class="fas fa-venus-mars me-1"></i>
+                                    {{ getCountByGender('MIXTE') }} mixtes
+                                </div>
+                                <div class="badge bg-secondary p-2" *ngIf="filtersApplied">
+                                    <i class="fas fa-filter me-1"></i>
+                                    Filtres actifs
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message d'alerte pour filtres -->
+                    <div *ngIf="filterMessageShown" class="alert alert-success alert-dismissible fade show mt-3"
+                        role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Filtres appliqués avec succès !
+                        <button type="button" class="btn-close" (click)="filterMessageShown = false"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message d'absence de données -->
+            <div *ngIf="getFilteredCompetitions().length === 0 && competitionCards.length === 0"
+                class="text-center my-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="fas fa-trophy fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">Aucune compétition trouvée</h4>
+                        <p class="text-muted">Aucune compétition n'est disponible pour le moment</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message de filtres vides -->
+            <div *ngIf="competitionCards.length > 0 && getFilteredCompetitions().length === 0" class="text-center my-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="fas fa-filter fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">Aucun résultat</h4>
+                        <p class="text-muted mb-4">Aucune compétition ne correspond à vos critères de recherche</p>
+                        <button class="btn btn-outline-info" (click)="resetFilters()">
+                            <i class="fas fa-undo me-2"></i>Effacer tous les filtres
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vue cartes (par défaut) -->
+            <div *ngIf="isCardView && filteredCompetitions.length > 0" class="row g-3">
+                <div class="col-lg-6 col-xl-4" *ngFor="let card of filteredCompetitions">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
+                        <div class="card-header bg-gradient text-white position-relative"
+                            [style.background]="'linear-gradient(135deg, ' + getCardColor(card.type) + ', ' + getCardColorSecondary(card.type) + ')'">
+                            <h6 class="mb-1 text-primary">
+                                <i class="fas fa-swimming-pool me-2"></i>
+                                {{ card.type }}
+                            </h6>
+                            <div class="competition-badge">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="description-content">
+                                <div *ngIf="card.description === 'Chargement de la description...'">
+                                    <div class="d-flex align-items-center">
+                                        <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                                        <span class="text-muted">{{ card.description }}</span>
+                                    </div>
+                                </div>
+                                <div *ngIf="card.description !== 'Chargement de la description...'"
+                                    [innerHTML]="card.description" class="description-text"></div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light border-0">
+                            <button class="btn btn-outline-primary w-100" (click)="planifier(card.type)">
+                                <i class="fas fa-calendar-plus me-2"></i>
+                                Planifier la compétition
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vue liste -->
+            <div *ngIf="!isCardView && filteredCompetitions.length > 0" class="card shadow-sm border-0">
+                <div class="card-header bg-light border-0">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list text-info me-2"></i>Liste des compétitions
+                    </h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item border-0 py-3" *ngFor="let card of filteredCompetitions">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="mb-1 text-primary">
+                                    <i class="fas fa-swimming-pool me-2"></i>
+                                    {{ card.type }}
+                                </h6>
+                                <div *ngIf="card.description === 'Chargement de la description...'" class="text-muted">
+                                    <i class="spinner-border spinner-border-sm text-primary me-2"></i>
+                                    {{ card.description }}
+                                </div>
+                                <div *ngIf="card.description !== 'Chargement de la description...'"
+                                    [innerHTML]="card.description" class="description-text-list"></div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-outline-primary" (click)="planifier(card.type)">
+                                    <i class="fas fa-calendar-plus me-2"></i>
+                                    Planifier
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination avancée -->
+            <nav *ngIf="totalPages > 1" class="mt-4 d-flex justify-content-between align-items-center">
+                <div class="pagination-info">
+                    <small class="text-muted">
+                        Affichage {{ (currentPage - 1) * itemsPerPage + 1 }} à
+                        {{ Math.min(currentPage * itemsPerPage, getFilteredCount()) }}
+                        sur {{ getFilteredCount() }} compétitions
+                    </small>
+                </div>
+
+                <ul class="pagination mb-0">
+                    <!-- Première page -->
+                    <li class="page-item" [class.disabled]="currentPage === 1">
+                        <button class="page-link" (click)="goToPage(1)" title="Première page">
+                            <i class="fas fa-angle-double-left"></i>
+                        </button>
+                    </li>
+
+                    <!-- Page précédente -->
+                    <li class="page-item" [class.disabled]="currentPage === 1">
+                        <button class="page-link" (click)="previousPage()" title="Page précédente">
+                            <i class="fas fa-angle-left"></i>
+                        </button>
+                    </li>
+
+                    <!-- Pages numérotées avec ellipses -->
+                    <li class="page-item" *ngFor="let page of getVisiblePages()" [class.active]="currentPage === page"
+                        [class.disabled]="page === '...'">
+                        <button class="page-link" (click)="page !== '...' && goToPage(page)"
+                            [class.fw-bold]="currentPage === page">
+                            {{ page }}
+                        </button>
+                    </li>
+
+                    <!-- Page suivante -->
+                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                        <button class="page-link" (click)="nextPage()" title="Page suivante">
+                            <i class="fas fa-angle-right"></i>
+                        </button>
+                    </li>
+
+                    <!-- Dernière page -->
+                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                        <button class="page-link" (click)="goToPage(totalPages)" title="Dernière page">
+                            <i class="fas fa-angle-double-right"></i>
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="page-size-selector">
+                    <select class="form-select form-select-sm" [(ngModel)]="itemsPerPage"
+                        (change)="onItemsPerPageChange()" style="width: auto;">
+                        <option value="5">5 par page</option>
+                        <option value="10">10 par page</option>
+                        <option value="20">20 par page</option>
+                        <option value="50">50 par page</option>
+                    </select>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Styles CSS personnalisés -->
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-color: #17a2b8;
+        --secondary-color: #138496;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #17a2b8;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+    }
+
+    /* Hero section */
+    .hero-section {
+        position: relative;
+        height: 400px;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .hero-image-container {
+        position: relative;
+        height: 100%;
+        width: 100%;
+    }
+
+    .hero-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, rgba(23, 162, 184, 0.8), rgba(52, 152, 219, 0.6));
+    }
+
+    .hero-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        font-weight: 300;
+        margin-bottom: 0;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Indicateurs de carousel */
+    .carousel-indicators {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 3;
+    }
+
+    .carousel-indicators button {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid white;
+        background: transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .carousel-indicators button.active {
+        background: white;
+        transform: scale(1.2);
+    }
+
+    /* Section filtres sticky */
+    .sticky-filters {
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        border: 2px solid transparent !important;
+        transition: all 0.3s ease;
+    }
+
+    .sticky-filters.scrolled {
+        border-color: var(--info-color) !important;
+        box-shadow: 0 4px 20px rgba(23, 162, 184, 0.1) !important;
+    }
+
+    /* Cards avec hover effect */
+    .card-hover {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Badge de compétition */
+    .competition-badge {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        padding: 8px;
+        border-radius: 50%;
+        font-size: 1.2rem;
+    }
+
+    /* Description des compétitions */
+    .description-content {
+        max-height: 150px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+    }
+
+    .description-text,
+    .description-text-list {
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #555;
+    }
+
+    .description-text-list {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Vue liste */
+    .list-group-item:hover {
+        background-color: rgba(23, 162, 184, 0.05);
+        border-radius: 8px;
+    }
+
+    /* Pagination améliorée */
+    .pagination {
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-link {
+        border: none;
+        color: var(--primary-color);
+        font-weight: 500;
+        padding: 0.7rem 1rem;
+        margin: 0 2px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .page-link:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(23, 162, 184, 0.3);
+    }
+
+    .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 10px rgba(23, 162, 184, 0.5);
+    }
+
+    .page-item.disabled .page-link {
+        color: #6c757d;
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+    }
+
+    .pagination-info {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .page-size-selector {
+        min-width: 120px;
+    }
+
+    /* Input groups */
+    .input-group-text {
+        background-color: var(--light-color);
+        border-color: #dee2e6;
+        color: #6c757d;
+    }
+
+    /* Boutons avec transitions */
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* Animations pour les filtres */
+    .form-control,
+    .form-select {
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+    }
+
+    /* Badge styling */
+    .badge {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .hero-section {
+            height: 300px;
+        }
+
+        .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination-info,
+        .page-size-selector {
+            text-align: center;
+            margin-top: 1rem;
+        }
+    }
+
+    /* Scrollbar personnalisé pour la description */
+    .description-content::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .description-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 6px;
+    }
+
+    .description-content::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 6px;
+    }
+
+    .description-content::-webkit-scrollbar-thumb:hover {
+        background: var(--secondary-color);
+    }
+</style>

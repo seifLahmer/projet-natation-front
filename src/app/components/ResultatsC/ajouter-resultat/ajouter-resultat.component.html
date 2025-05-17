@@ -1,0 +1,218 @@
+<!-- ajout-resultat.component.html -->
+<div class="ajout-resultat-container">
+    <div class="header">
+        <h2>Ajout d'un Résultat de Compétition</h2>
+
+        <!-- Indicateur d'étape -->
+        <div class="steps-indicator">
+            <div class="step" [ngClass]="{'active': currentStep === 1, 'done': currentStep > 1}">
+                <div class="step-number">1</div>
+                <div class="step-label">Sélection du Nageur</div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" [ngClass]="{'active': currentStep === 2, 'done': currentStep > 2}">
+                <div class="step-number">2</div>
+                <div class="step-label">Sélection de la Compétition</div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" [ngClass]="{'active': currentStep === 3}">
+                <div class="step-number">3</div>
+                <div class="step-label">Détails du Résultat</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay de chargement -->
+    <div *ngIf="loading" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- ÉTAPE 1: Sélection du Nageur -->
+    <div *ngIf="currentStep === 1" class="step-content">
+        <h3>Sélectionner un Nageur</h3>
+
+        <!-- Formulaire de filtres -->
+        <form [formGroup]="userFilterForm" class="filter-form">
+            <div class="search-bar">
+                <input type="text" formControlName="searchTerm" placeholder="Rechercher un nageur (nom, prénom, email)">
+                <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="form-group">
+                    <label for="nation">Nationalité</label>
+                    <select formControlName="nation" id="nation">
+                        <option value="">Toutes les nationalités</option>
+                        <option *ngFor="let nation of uniqueNations" [value]="nation">
+                            {{ nation }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="club">Club</label>
+                    <select formControlName="club" id="club">
+                        <option value="">Tous les clubs</option>
+                        <option *ngFor="let club of uniqueClubs" [value]="club">
+                            {{ club }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </form>
+
+        <!-- Liste des nageurs -->
+        <div class="users-list">
+            <div *ngIf="filteredUsers.length === 0" class="no-results">
+                Aucun nageur trouvé avec ces critères.
+            </div>
+
+            <div *ngFor="let user of filteredUsers" class="user-card"
+                [ngClass]="{'selected': selectedUser?.id === user.id}" (click)="selectUser(user)">
+                <div class="user-info">
+                    <h4>{{ user.prenom }} {{ user.nom }}</h4>
+                    <p>
+                        <i class="fas fa-flag"></i> {{ user.nation }} |
+                        <i class="fas fa-swimming-pool"></i> {{ user.nomClub }}
+                    </p>
+                    <p>
+                        <i class="fas fa-birthday-cake"></i> {{ user.naissance | date }}
+                    </p>
+                    <p>
+                        <i class="fas fa-envelope"></i> {{ user.email }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation-buttons">
+            <button class="next-btn" [disabled]="!selectedUser" (click)="nextStep()">
+                Suivant <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ÉTAPE 2: Sélection de la Compétition -->
+    <div *ngIf="currentStep === 2" class="step-content">
+        <h3>Sélectionner une Compétition</h3>
+
+        <!-- Filtrage de compétition -->
+        <form [formGroup]="competitionForm" class="filter-form">
+            <div class="form-group">
+                <label for="competitionType">Type de Compétition</label>
+                <select formControlName="type" id="competitionType" (change)="filterCompetitions()">
+                    <option value="">Tous les types</option>
+                    <option *ngFor="let type of competitionTypes" [value]="type">
+                        {{ type }}
+                    </option>
+                </select>
+            </div>
+        </form>
+
+        <!-- Liste des compétitions -->
+        <div class="competitions-list">
+            <div *ngIf="filteredCompetitions.length === 0" class="no-results">
+                Aucune compétition trouvée avec ces critères.
+            </div>
+
+            <div *ngFor="let competition of filteredCompetitions" class="competition-card"
+                [ngClass]="{'selected': selectedCompetition?.idReservation === competition.idReservation}"
+                (click)="selectCompetition(competition)">
+                <div class="competition-info">
+                    <h4>{{ competition.typeC }}</h4>
+                    <p>
+                        <i class="fas fa-calendar-alt"></i>
+                        {{ competition.dateDebut | date }} au {{ competition.dateFin | date }}
+                    </p>
+                    <p>
+                        <i class="fas fa-clock"></i> {{ competition.heure }}
+                    </p>
+                    <p>
+                        <i class="fas fa-users"></i> {{ competition.nbrParticipants }} participants
+                    </p>
+                    <p *ngIf="competition.piscine">
+                        <i class="fas fa-swimming-pool"></i> {{ competition.piscine.nomPiscine }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation-buttons">
+            <button class="prev-btn" (click)="prevStep()">
+                <i class="fas fa-arrow-left"></i> Précédent
+            </button>
+            <button class="next-btn" [disabled]="!selectedCompetition" (click)="nextStep()">
+                Suivant <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ÉTAPE 3: Détails du Résultat -->
+    <div *ngIf="currentStep === 3" class="step-content">
+        <h3>Détails du Résultat</h3>
+
+        <!-- Récapitulatif des sélections -->
+        <div class="recap">
+            <div class="recap-section">
+                <h4>Nageur</h4>
+                <p>{{ selectedUser?.prenom }} {{ selectedUser?.nom }}</p>
+                <p>{{ selectedUser?.nomClub }} ({{ selectedUser?.nation }})</p>
+            </div>
+
+            <div class="recap-section">
+                <h4>Compétition</h4>
+                <p>{{ selectedCompetition?.typeC }}</p>
+                <p>{{ selectedCompetition?.dateDebut | date }}</p>
+            </div>
+        </div>
+
+        <!-- Formulaire pour les détails du résultat -->
+        <form [formGroup]="resultatForm" class="result-form" (ngSubmit)="submitForm()">
+            <div class="form-group">
+                <label for="place">Place</label>
+                <input type="number" formControlName="place" id="place" min="1">
+                <div *ngIf="resultatForm.get('place')?.invalid && resultatForm.get('place')?.touched"
+                    class="error-message">
+                    La place est requise et doit être un nombre positif.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="temps">Temps (MM:SS.CC)</label>
+                <input type="text" formControlName="temps" id="temps" placeholder="00:58.45">
+                <div *ngIf="resultatForm.get('temps')?.invalid && resultatForm.get('temps')?.touched"
+                    class="error-message">
+                    Le format du temps doit être MM:SS.CC (ex: 00:58.45).
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="points">Points</label>
+                <input type="number" formControlName="points" id="points" min="0">
+                <div *ngIf="resultatForm.get('points')?.invalid && resultatForm.get('points')?.touched"
+                    class="error-message">
+                    Les points sont requis et doivent être un nombre positif.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tempsDePassage">Temps de Passage (optionnel)</label>
+                <input type="text" formControlName="tempsDePassage" id="tempsDePassage" placeholder="00:28.30">
+            </div>
+
+            <!-- Navigation et soumission -->
+            <div class="navigation-buttons">
+                <button type="button" class="prev-btn" (click)="prevStep()">
+                    <i class="fas fa-arrow-left"></i> Précédent
+                </button>
+                <button type="submit" class="submit-btn" [disabled]="resultatForm.invalid">
+                    <i class="fas fa-save"></i> Enregistrer le Résultat
+                </button>
+            </div>
+        </form>
+    </div>
+    </div>

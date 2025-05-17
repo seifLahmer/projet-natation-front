@@ -1,0 +1,475 @@
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Section de filtres avec header moderne -->
+            <div class="card shadow-sm border-0 mb-4 sticky-filters">
+                <div class="card-header bg-light border-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user-plus text-info me-2"></i>Gestion des inscriptions
+                    </h5>
+                    <!-- Recherches rapides en badge -->
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-sm btn-outline-info" (click)="rechercheRapide('en_attente')"
+                            title="Inscriptions en attente">
+                            <i class="fas fa-clock me-1"></i>En attente ({{ getCountByStatut('EN_ATTENTE') }})
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" (click)="rechercheRapide('validees')"
+                            title="Inscriptions validées">
+                            <i class="fas fa-check me-1"></i>Validées ({{ getCountByStatut('CONFIRMEE') }})
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="rechercheRapide('rejetees')"
+                            title="Inscriptions rejetées">
+                            <i class="fas fa-times me-1"></i>Rejetées ({{ getCountByStatut('REJETEE') }})
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="resetAllFilters()"
+                            title="Réinitialiser tous les filtres">
+                            <i class="fas fa-undo me-1"></i>Reset
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <!-- Filtre par statut -->
+                        <div class="col-md-3">
+                            <label for="filtreStatut" class="form-label">
+                                <i class="fas fa-flag text-success me-2"></i>Statut des inscriptions
+                            </label>
+                            <select class="form-select" id="filtreStatut" [(ngModel)]="selectedStatut"
+                                (change)="appliquerFiltresEtTris()">
+                                <option value="TOUS">Tous</option>
+                                <option [value]="StatutInscription.EN_ATTENTE">En attente</option>
+                                <option [value]="StatutInscription.CONFIRMEE">Validée</option>
+                                <option [value]="StatutInscription.REJETEE">Rejetée</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtre par type de compétition -->
+                        <div class="col-md-3">
+                            <label for="filtreTypeCompetition" class="form-label">
+                                <i class="fas fa-trophy text-warning me-2"></i>Type de compétition
+                            </label>
+                            <select class="form-select" id="filtreTypeCompetition" [(ngModel)]="selectedTypeCompetition"
+                                (change)="appliquerFiltresEtTris()">
+                                <option value="TOUS">Tous les types</option>
+                                <option *ngFor="let type of typesCompetition" [value]="type">{{ type }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtre par période d'inscription -->
+                        <div class="col-md-3">
+                            <label for="filtrePeriode" class="form-label">
+                                <i class="fas fa-calendar text-info me-2"></i>Période d'inscription
+                            </label>
+                            <select class="form-select" id="filtrePeriode" [(ngModel)]="selectedPeriode"
+                                (change)="appliquerFiltresEtTris()">
+                                <option value="TOUS">Toutes les périodes</option>
+                                <option value="AUJOURD_HUI">Aujourd'hui</option>
+                                <option value="CETTE_SEMAINE">Cette semaine</option>
+                                <option value="CE_MOIS">Ce mois</option>
+                                <option value="MOIS_DERNIER">Mois dernier</option>
+                            </select>
+                        </div>
+
+                        <!-- Tri -->
+                        <div class="col-md-3">
+                            <label for="triCritere" class="form-label">
+                                <i class="fas fa-sort text-primary me-2"></i>Trier par
+                            </label>
+                            <select class="form-select" id="triCritere" [(ngModel)]="selectedTriCritere"
+                                (change)="appliquerFiltresEtTris()">
+                                <option value="DATE_DESC">Date d'inscription (Plus récent)</option>
+                                <option value="DATE_ASC">Date d'inscription (Plus ancien)</option>
+                                <option value="STATUT">Statut</option>
+                                <option value="TYPE_COMPETITION">Type de compétition</option>
+                                <option value="DATE_COMPETITION">Date de compétition</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Recherche textuelle avancée -->
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <label for="recherche" class="form-label">
+                                <i class="fas fa-search text-primary me-2"></i>Recherche avancée
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="recherche" [(ngModel)]="searchTerm"
+                                    (input)="appliquerFiltresEtTris()"
+                                    placeholder="Rechercher par ID, type, période...">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false" title="Options de recherche">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <h6 class="dropdown-header">Recherche par :</h6>
+                                        </li>
+                                        <li><label class="dropdown-item"><input type="checkbox"
+                                                    [(ngModel)]="searchOptions.id" (change)="appliquerFiltresEtTris()">
+                                                ID d'inscription</label></li>
+                                        <li><label class="dropdown-item"><input type="checkbox"
+                                                    [(ngModel)]="searchOptions.typeCompetition"
+                                                    (change)="appliquerFiltresEtTris()">
+                                                Type de compétition</label></li>
+                                        <li><label class="dropdown-item"><input type="checkbox"
+                                                    [(ngModel)]="searchOptions.dateInscription"
+                                                    (change)="appliquerFiltresEtTris()">
+                                                Date d'inscription</label></li>
+                                        <li><label class="dropdown-item"><input type="checkbox"
+                                                    [(ngModel)]="searchOptions.dateCompetition"
+                                                    (change)="appliquerFiltresEtTris()">
+                                                Date de compétition</label></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li><a class="dropdown-item text-primary" href="#"
+                                                (click)="toggleAllSearch()">Tout
+                                                sélectionner/désélectionner</a></li>
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()"
+                                    title="Effacer la recherche">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="mt-1">
+                                <small class="text-muted">
+                                    Exemples : "2024", "Libre", "Mai 2024", "Brasse", "#123"
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistiques rapides -->
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="d-flex flex-wrap gap-3">
+                                <div class="badge bg-info p-2">
+                                    <i class="fas fa-list me-1"></i>
+                                    {{ filteredInscriptions.length }}/{{ inscriptions.length }} inscriptions
+                                </div>
+                                <div class="badge bg-warning p-2">
+                                    <i class="fas fa-clock me-1"></i>
+                                    {{ getCountByStatut('EN_ATTENTE') }} en attente
+                                </div>
+                                <div class="badge bg-success p-2">
+                                    <i class="fas fa-check me-1"></i>
+                                    {{ getCountByStatut('CONFIRMEE') }} confirmées
+                                </div>
+                                <div class="badge bg-danger p-2">
+                                    <i class="fas fa-times me-1"></i>
+                                    {{ getCountByStatut('REJETEE') }} rejetées
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message d'absence de données -->
+            <div *ngIf="filteredInscriptions.length === 0 && inscriptions.length === 0" class="text-center my-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="fas fa-user-plus fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">Aucune inscription trouvée</h4>
+                        <p class="text-muted">Aucune inscription n'a été effectuée pour le moment</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message de filtres vides -->
+            <div *ngIf="filteredInscriptions.length === 0 && inscriptions.length > 0" class="text-center my-5">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-5">
+                        <i class="fas fa-filter fa-4x text-muted mb-3"></i>
+                        <h4 class="text-muted mb-3">Aucun résultat</h4>
+                        <p class="text-muted mb-4">Aucune inscription ne correspond à vos critères de recherche</p>
+                        <button class="btn btn-outline-info" (click)="resetAllFilters()">
+                            <i class="fas fa-undo me-2"></i>Effacer tous les filtres
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Liste des inscriptions en cartes modernes -->
+            <div *ngIf="filteredInscriptions.length > 0" class="row g-3">
+                <div class="col-lg-6 col-xl-4" *ngFor="let inscription of filteredInscriptions">
+                    <div class="card h-100 shadow-sm border-0 card-hover">
+                        <!-- Header de la carte avec statut -->
+                        <div class="card-header d-flex justify-content-between align-items-center" [ngClass]="{
+                               'bg-warning text-dark': inscription.statut === StatutInscription.EN_ATTENTE,
+                               'bg-success text-white': inscription.statut === StatutInscription.CONFIRMEE,
+                               'bg-danger text-white': inscription.statut === StatutInscription.REJETEE
+                             }">
+                            <h6 class="mb-0">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Inscription #{{ inscription.idInscription }}
+                            </h6>
+                            <span class="badge" [ngClass]="{
+                                    'bg-dark': inscription.statut === StatutInscription.EN_ATTENTE,
+                                    'bg-light text-dark': inscription.statut !== StatutInscription.EN_ATTENTE
+                                  }">
+                                <i class="fas fa-clock me-1"
+                                    *ngIf="inscription.statut === StatutInscription.EN_ATTENTE"></i>
+                                <i class="fas fa-check me-1"
+                                    *ngIf="inscription.statut === StatutInscription.CONFIRMEE"></i>
+                                <i class="fas fa-times me-1"
+                                    *ngIf="inscription.statut === StatutInscription.REJETEE"></i>
+                                {{ inscription.statut === StatutInscription.EN_ATTENTE ? 'En attente' :
+                                inscription.statut === StatutInscription.CONFIRMEE ? 'Acceptée' : 'Refusée' }}
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- Informations principales -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <small class="text-muted">Date d'inscription</small>
+                                    <div class="fw-semibold">
+                                        <i class="fas fa-calendar-alt text-info me-1"></i>
+                                        {{ inscription.dateInscription | date:'dd/MM/yyyy' }}
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Compétition</small>
+                                    <div class="fw-semibold text-truncate"
+                                        title="{{ inscription.competition?.typeC || 'Non définie' }}">
+                                        <i class="fas fa-trophy text-warning me-1"></i>
+                                        {{ inscription.competition?.typeC || 'Non définie' }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gestion du statut pour inscriptions en attente -->
+                            <div *ngIf="inscription.statut === StatutInscription.EN_ATTENTE" class="mb-3">
+                                <label class="form-label text-muted small">Changer le statut</label>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" [(ngModel)]="inscription.nouveauStatut">
+                                        <option [value]="StatutInscription.EN_ATTENTE">En attente</option>
+                                        <option [value]="StatutInscription.CONFIRMEE">Validée</option>
+                                        <option [value]="StatutInscription.REJETEE">Rejetée</option>
+                                    </select>
+                                    <button class="btn btn-sm btn-success" (click)="mettreAJourStatut(inscription)"
+                                        title="Appliquer le changement">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Message pour inscriptions traitées -->
+                            <div *ngIf="inscription.statut !== StatutInscription.EN_ATTENTE"
+                                class="alert alert-sm alert-light border mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Cette inscription a été traitée et ne peut plus être modifiée
+                                </small>
+                            </div>
+
+                            <!-- Informations complémentaires -->
+                            <div *ngIf="inscription.competition" class="text-muted small">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Date début :</span>
+                                    <span>{{ inscription.competition.dateDebut | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between" *ngIf="inscription.competition.dateFin">
+                                    <span>Date fin :</span>
+                                    <span>{{ inscription.competition.dateFin | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer avec bouton détails -->
+                        <div class="card-footer bg-light border-0">
+                            <button class="btn btn-outline-info btn-sm w-100"
+                                (click)="ouvrirModal(inscription.idInscription)">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <small class="text-muted">🏆 Compétition : {{ inscription.competition.typeC }}</small>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Détails Compétition - Version modernisée -->
+<div class="modal fade" id="competitionModal" tabindex="-1" aria-labelledby="competitionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-gradient text-white"
+                style="background: linear-gradient(45deg, #17a2b8, #138496);">
+                <h5 class="modal-title d-flex align-items-center">
+                    <i class="fas fa-trophy fa-lg me-3"></i>
+                    Détails de la compétition
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body p-4" *ngIf="selectedCompetition">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="card-title text-info">
+                                    <i class="fas fa-info-circle me-2"></i>Informations générales
+                                </h6>
+                                <div class="mb-3">
+                                    <strong>Type :</strong>
+                                    <br><span class="badge bg-warning text-dark">{{ selectedCompetition.typeC }}</span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Heure :</strong>
+                                    <br><span class="badge bg-info">{{ selectedCompetition.heure }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-light h-100">
+                            <div class="card-body">
+                                <h6 class="card-title text-success">
+                                    <i class="fas fa-calendar-alt me-2"></i>Période
+                                </h6>
+                                <div class="mb-3">
+                                    <strong>Date Debut :</strong>
+                                    <br>{{ selectedCompetition.dateDebut | date:'dd/MM/yyyy' }}
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Date Fin :</strong>
+                                    <br>{{ selectedCompetition.dateFin | date:'dd/MM/yyyy' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles CSS personnalisés -->
+<style>
+    /* Couleurs personnalisées */
+    :root {
+        --primary-color: #17a2b8;
+        --secondary-color: #138496;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+        --info-color: #17a2b8;
+        --light-color: #f8f9fa;
+        --dark-color: #343a40;
+    }
+
+    /* Section filtres sticky */
+    .sticky-filters {
+        position: sticky;
+        top: 20px;
+        z-index: 100;
+        border: 2px solid transparent !important;
+        transition: all 0.3s ease;
+    }
+
+    .sticky-filters.scrolled {
+        border-color: var(--info-color) !important;
+        box-shadow: 0 4px 20px rgba(23, 162, 184, 0.1) !important;
+    }
+
+    /* Cards avec hover effect */
+    .card-hover {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Input groups */
+    .input-group-text {
+        background-color: var(--light-color);
+        border-color: #dee2e6;
+        color: #6c757d;
+    }
+
+    /* Boutons avec transitions */
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+    }
+
+    /* Amélioration des alertes */
+    .alert-sm {
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    /* Modal amélioré */
+    .modal-content {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .modal-backdrop {
+        backdrop-filter: blur(3px);
+    }
+
+    /* Animations pour les filtres */
+    .form-control,
+    .form-select {
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(23, 162, 184, 0.25);
+    }
+
+    /* Headers de cartes avec statuts */
+    .card-header.bg-warning {
+        background: linear-gradient(45deg, #ffc107, #e0a800) !important;
+    }
+
+    .card-header.bg-success {
+        background: linear-gradient(45deg, #28a745, #218838) !important;
+    }
+
+    .card-header.bg-danger {
+        background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .card-header .d-flex {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .card-header .badge {
+            margin-top: 0.5rem;
+        }
+    }
+
+    /* Badge styling */
+    .badge {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Cards layout improvements */
+    .card-footer {
+        padding: 0.75rem 1.25rem;
+    }
+</style>

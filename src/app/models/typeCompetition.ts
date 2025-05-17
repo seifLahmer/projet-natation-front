@@ -1,0 +1,5 @@
+export enum typeCompetition {
+    NATIONALE = 'NATIONALE',
+    REGIONALE = 'REGIONALE',
+    INTERNATIONALE = 'INTERNATIONALE'
+} 
