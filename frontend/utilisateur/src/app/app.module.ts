@@ -13,6 +13,10 @@ import { CommonModule } from '@angular/common';
 import { AdminModule } from './admin/admin.module';
 import { ChefEquipeComponent } from './chef-equipe/chef-equipe.component';
 import { JoueurComponent } from './joueur/joueur.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -21,7 +25,9 @@ import { JoueurComponent } from './joueur/joueur.component';
     DashboardComponent,
     RegisterComponent,
     ChefEquipeComponent,
-    JoueurComponent
+    JoueurComponent,
+    ForgotPasswordComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +37,8 @@ import { JoueurComponent } from './joueur/joueur.component';
     RouterModule, // Nécessaire pour routerLink
     AppRoutingModule,
      CommonModule,
-     AdminModule
+     AdminModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -65,4 +65,29 @@ export class AuthService {
     const user = this.currentUserValue;
     return user && user.role === 'JOUEUR';
   }
+   forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email }).pipe(
+      catchError(error => {
+        let errorMsg = 'Une erreur est survenue';
+        if (error.error?.error) {
+          errorMsg = error.error.error;
+        } else if (error.status === 404) {
+          errorMsg = 'Aucun compte trouvé avec cet email';
+        }
+        return throwError(() => errorMsg);
+      })
+    );
+  }
+
+  resetPassword(email: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/reset-password`, { email, newPassword }).pipe(
+      catchError(error => {
+        let errorMsg = 'Une erreur est survenue';
+        if (error.error?.error) {
+          errorMsg = error.error.error;
+        }
+        return throwError(() => errorMsg);
+      })
+    );
+  }
 }

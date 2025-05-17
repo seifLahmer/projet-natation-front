@@ -6,6 +6,8 @@ import { ChefEquipeComponent } from './chef-equipe/chef-equipe.component';
 import { JoueurComponent } from './joueur/joueur.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RegisterComponent } from './register/register.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
   { 
@@ -32,14 +34,19 @@ const routes: Routes = [
     path: 'dashboard', 
     component: DashboardComponent
   },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+   { 
+    path: 'reset-password', 
+    component: ResetPasswordComponent 
+  },
   { 
     path: '', 
-    redirectTo: '/login', 
+    redirectTo: '/dashboard', 
     pathMatch: 'full' 
   },
   { 
     path: '**', 
-    redirectTo: '/login' 
+    redirectTo: '/dahsboard' 
   }
 ];
 

@@ -1,0 +1,100 @@
+/* Style général */
+.joueur-container {
+  font-family: 'Arial', sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* En-tête */
+.header {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.welcome-section h1 {
+  color: #2c3e50;
+  font-size: 24px;
+  margin: 0;
+}
+
+/* Icône de profil */
+.profile-icon img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.profile-icon img:hover {
+  transform: scale(1.1);
+}
+
+/* Menu de navigation */
+.nav-menu ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-menu li {
+  margin-right: 20px;
+}
+
+.nav-menu a {
+  text-decoration: none;
+  color: #3498db;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.nav-menu a:hover {
+  background-color: #e8f4fc;
+}
+
+/* Section équipe */
+.team-section {
+  background-color: #f1f8fe;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.team-section h2 {
+  color: #2980b9;
+  margin-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .welcome-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .profile-icon {
+    margin-top: 15px;
+  }
+  
+  .nav-menu ul {
+    flex-direction: column;
+  }
+  
+  .nav-menu li {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
