@@ -371,7 +371,7 @@ export class AjouterPComponent implements OnInit {
         next: () => {
           this.submitting = false;
           this.showSuccessMessage('Piscine modifiée avec succès!');
-          this.router.navigate(['/piscines']);
+          this.router.navigate(['/admin/piscines']);
         },
         error: (err) => {
           this.submitting = false;
@@ -386,7 +386,7 @@ export class AjouterPComponent implements OnInit {
         next: () => {
           this.submitting = false;
           this.showSuccessMessage('Piscine créée avec succès!');
-          this.router.navigate(['/piscines']);
+          this.router.navigate(['/admin/piscines']);
         },
         error: (err) => {
           this.submitting = false;
@@ -459,7 +459,7 @@ export class AjouterPComponent implements OnInit {
   private navigateToList(): void {
     // Supprimer le brouillon lors de l'annulation
     localStorage.removeItem('piscine_draft');
-    this.router.navigate(['/piscines']);
+    this.router.navigate(['/admin/piscines']);
   }
 
   // Méthodes utilitaires supplémentaires

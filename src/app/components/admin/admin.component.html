@@ -1,0 +1,185 @@
+<div class="admin-container">
+ <header> <!-- Header - Toujours visible -->
+  <div class="admin-header">
+    <img src="assets/images/thumbnail_image (3).png" alt="Logo" class="admin-logo">
+    <h1>Tableau de bord Administrateur</h1>
+    <button (click)="logout()" class="logout-btn">Déconnexion</button>
+  </div>
+
+  <!-- Navigation - Toujours visible -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-white" href="#"> NatationClub</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- Ajout d'un lien vers la page d'accueil admin -->
+          <li class="nav-item">
+            <a class="nav-link text-white" [routerLink]="['/admin']" [routerLinkActiveOptions]="{exact: true}"
+              routerLinkActive="active">Accueil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="piscines" routerLinkActive="active">Piscines</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="competitions" routerLinkActive="active">Compétitions
+              Planifiees</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="competitions/cartes" routerLinkActive="active">Ajouter Une
+              Competition</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="inscriptions/user" routerLinkActive="active">Inscriptions</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" routerLink="resultats/ajouter" routerLinkActive="active">Resultats ajout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>
+  <div class="admin-content">
+    <!-- Contenu conditionnel: affiché uniquement sur la route /admin exacte -->
+    <ng-container *ngIf="!isChildRouteActive">
+      <!-- Section Statistiques -->
+      <div class="stats-section">
+        <div class="stat-card">
+          <h3>Chefs validés</h3>
+          <p>{{ stats.chefsValides || 0 }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>Clubs enregistrés</h3>
+          <p>{{ stats.clubsEnregistres || 0 }}</p>
+        </div>
+        <div class="stat-card">
+          <h3>En attente</h3>
+          <p>{{ chefsEnAttente.length || 0 }}</p>
+        </div>
+      </div>
+
+      <!-- Section Validation des chefs -->
+      <div class="validation-section">
+        <h2>Validation des chefs de club</h2>
+
+        <div *ngIf="loading" class="loading">Chargement en cours...</div>
+
+        <div *ngIf="!loading && chefsEnAttente.length === 0" class="no-data">
+          Aucun chef de club en attente de validation
+        </div>
+
+        <table *ngIf="!loading && chefsEnAttente.length > 0" class="chefs-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Rôle</th>
+              <th>Club</th>
+              <th>Adresse Club</th>
+              <th>Date création</th>
+              <th>Document</th>
+              <th class="actions-header">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let chef of chefsEnAttente">
+              <td>{{ chef.nom }}</td>
+              <td>{{ chef.prenom }}</td>
+              <td>{{ chef.email }}</td>
+              <td>{{ chef.telephone }}</td>
+              <td>{{ chef.role }}</td>
+              <td>{{ chef.nomClub || 'N/A' }}</td>
+              <td>{{ chef.adresseClub || 'N/A' }}</td>
+              <td>{{ chef.dateCreation || 'N/A' }}</td>
+              <td>
+                <ng-container *ngIf="chef.documentPath; else noDocument">
+                  <a [href]="chef.documentPath" target="_blank" class="document-link">
+                    <i class="fas fa-file-pdf"></i> Voir document
+                  </a>
+                </ng-container>
+                <ng-template #noDocument>
+                  <span>N/A</span>
+                </ng-template>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons">
+                  <button (click)="validerChef(chef.id)" class="btn-icon" title="Valider">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button (click)="rejeterChef(chef.id)" class="btn-icon" title="Rejeter">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <button (click)="modifierChef(chef)" class="btn-icon" title="Modifier">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section Dernières activités -->
+      <div class="activity-section">
+        <h2>Dernières activités</h2>
+        <div class="activity-list">
+          <div *ngFor="let activity of lastActivities" class="activity-item">
+            <p><strong>{{ activity.action }}</strong></p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Router outlet pour les composants enfants - affiché lorsqu'une route enfant est active -->
+    <router-outlet></router-outlet>
+  </div>
+
+  <!-- Modal de modification - toujours disponible -->
+  <div *ngIf="showEditModal" class="modal-overlay">
+    <div class="modal-content">
+      <h2>Modifier le chef de club</h2>
+
+      <div class="form-group">
+        <label>Nom:</label>
+        <input [(ngModel)]="selectedChef.nom" type="text">
+      </div>
+
+      <div class="form-group">
+        <label>Prénom:</label>
+        <input [(ngModel)]="selectedChef.prenom" type="text">
+      </div>
+
+      <div class="form-group">
+        <label>Email:</label>
+        <input [(ngModel)]="selectedChef.email" type="email">
+      </div>
+
+      <div class="form-group">
+        <label>Téléphone:</label>
+        <input [(ngModel)]="selectedChef.telephone" type="tel">
+      </div>
+
+      <div class="form-group">
+        <label>Nom du Club:</label>
+        <input [(ngModel)]="selectedChef.nomClub" type="text">
+      </div>
+
+      <div class="form-group">
+        <label>Adresse du Club:</label>
+        <input [(ngModel)]="selectedChef.adresseClub" type="text">
+      </div>
+
+      <div class="modal-actions">
+        <button (click)="showEditModal = false" class="btn-cancel">Annuler</button>
+        <button (click)="saveModifications()" class="btn-save">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

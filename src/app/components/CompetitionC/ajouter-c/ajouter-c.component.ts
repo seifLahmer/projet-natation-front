@@ -301,7 +301,7 @@ export class AjouterCComponent implements OnInit {
         next: () => {
           this.submitting = false;
           this.showSuccessMessage('Compétition mise à jour avec succès!');
-          this.router.navigate(['/competitions']);
+          this.router.navigate(['/admin/competitions']);
         },
         error: (err) => {
           this.error = 'Erreur lors de la mise à jour de la compétition: ' + err.message;
@@ -317,7 +317,7 @@ export class AjouterCComponent implements OnInit {
         next: () => {
           this.submitting = false;
           this.showSuccessMessage('Compétition créée avec succès!');
-          this.router.navigate(['/competitions']);
+          this.router.navigate(['/admin/competitions']);
         },
         error: (err) => {
           this.error = 'Erreur lors de l\'ajout de la compétition: ' + err.message;
@@ -360,11 +360,16 @@ export class AjouterCComponent implements OnInit {
   }
 
   private navigateToList(): void {
+    if (this.isEditMode) {
+      this.router.navigate(['/admin/competitions']);
+     
+      this.isEditMode = true;
+    }else {
     this.router.navigate(['/competitions']);
     this.resetForm();
     this.isEditMode = false;
     this.competitionId = 0;
-    this.pageTitle = 'Planifier une compétition';
+    this.pageTitle = 'Planifier une compétition';}
   }
 
   // Méthodes utilitaires pour améliorer l'UX

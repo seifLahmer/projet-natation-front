@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { InscriptionService } from 'src/app/services/inscription/inscriptions.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
+import { AuthService } from 'src/app/services/_services/auth.service';
 @Component({
   selector: 'app-competition',
   templateUrl: './competition.component.html',
@@ -37,7 +37,8 @@ export class CompetitionComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private competitionService: CompetitionService,
     private router: Router,
-    private inscriptionService: InscriptionService
+    private inscriptionService: InscriptionService,
+    public authService: AuthService
   ) {
     // Configuration du debounce pour la recherche
     this.searchSubject.pipe(
@@ -229,11 +230,11 @@ export class CompetitionComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // CRUD Operations (logique conservée)
   ajouterCompetition(): void {
-    this.router.navigate(['/competitions/ajouter']);
+    this.router.navigate(['admin/competitions/ajouter']);
   }
 
   modifierCompetition(id: number): void {
-    this.router.navigate(['/competitions/modifier', id]);
+    this.router.navigate(['/admin/competitions/modifier', id]);
   }
 
   supprimerCompetition(id: number): void {

@@ -1,0 +1,111 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="register-header">
+      <img src="assets/images/logo-federation.png" alt="Logo Fédération" class="auth-logo">
+      <h2>Inscription Chef d'Équipe/Club</h2>
+      <p>Créez votre compte pour gérer votre club de natation</p>
+      <p class="info-text">* Votre compte sera activé après validation par l'administrateur.</p>
+    </div>
+
+    <form class="register-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Informations personnelles -->
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" formControlName="nom" placeholder="Votre nom" required>
+        <i class="fas fa-user"></i>
+        <div *ngIf="registerForm.get('nom')?.invalid && registerForm.get('nom')?.touched" class="error-message">
+          Le nom est requis
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="prenom">Prénom</label>
+        <input type="text" id="prenom" formControlName="prenom" placeholder="Votre prénom" required>
+        <i class="fas fa-user"></i>
+        <div *ngIf="registerForm.get('prenom')?.invalid && registerForm.get('prenom')?.touched" class="error-message">
+          Le prénom est requis
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email professionnel</label>
+        <input type="email" id="email" formControlName="email" placeholder="club@example.com" required>
+        <i class="fas fa-envelope"></i>
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
+          Veuillez entrer un email valide
+        </div>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="form-group password-group">
+        <label for="password">Mot de passe</label>
+        <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" placeholder="••••••••" required>
+        <i class="fas fa-lock"></i>
+        <span class="toggle-password" (click)="togglePassword()" [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></span>
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">
+          Le mot de passe doit contenir au moins 6 caractères
+        </div>
+      </div>
+
+      <div class="form-group password-group">
+        <label for="confirmPassword">Confirmer mot de passe</label>
+        <input [type]="showPassword ? 'text' : 'password'" id="confirmPassword" formControlName="confirmPassword" placeholder="••••••••" required>
+        <i class="fas fa-lock"></i>
+        <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched" class="error-message">
+          Les mots de passe ne correspondent pas
+        </div>
+      </div>
+
+      <!-- Coordonnées du club -->
+      <div class="form-group">
+        <label for="nomClub">Nom du Club</label>
+        <input type="text" id="nomClub" formControlName="nomClub" placeholder="Ex: Club Olympique de Tunisie" required>
+        <i class="fas fa-users"></i>
+        <div *ngIf="registerForm.get('nomClub')?.invalid && registerForm.get('nomClub')?.touched" class="error-message">
+          Le nom du club est requis
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="adresseClub">Adresse du Club</label>
+        <input type="text" id="adresseClub" formControlName="adresseClub" placeholder="Adresse officielle" required>
+        <i class="fas fa-map-marker-alt"></i>
+        <div *ngIf="registerForm.get('adresseClub')?.invalid && registerForm.get('adresseClub')?.touched" class="error-message">
+          L'adresse du club est requise
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="telephone">Téléphone</label>
+        <input type="tel" id="telephone" formControlName="telephone" placeholder="XX XXX XXX" required>
+        <i class="fas fa-phone"></i>
+        <div *ngIf="registerForm.get('telephone')?.invalid && registerForm.get('telephone')?.touched" class="error-message">
+          Veuillez entrer un numéro de téléphone valide (8 chiffres)
+        </div>
+      </div>
+
+      <!-- Pièce jointe (optionnelle pour preuve) -->
+      <div class="form-group">
+        <label for="documentJustificatif">Document justificatif (PDF)</label>
+        <input type="file" id="documentJustificatif" (change)="onFileChange($event)" accept=".pdf">
+        <small>* Certificat d'affiliation ou document officiel du club</small>
+      </div>
+
+      <button type="submit" class="submit-btn" [disabled]="registerForm.invalid || loading">
+        <span *ngIf="!loading">Soumettre la demande</span>
+        <span *ngIf="loading" class="spinner"></span>
+      </button>
+
+      <div class="register-footer">
+        <p>Après validation, vous pourrez :</p>
+        <ul>
+          <li>Ajouter/gérer les entraîneurs et nageurs de votre club</li>
+          <li>Inscrire votre club aux compétitions</li>
+        </ul>
+        <div class="login-link">
+          Déjà inscrit ? <a routerLink="/login">Connectez-vous ici</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

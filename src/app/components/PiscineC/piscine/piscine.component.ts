@@ -215,11 +215,11 @@ export class PiscineComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // Navigation et actions CRUD
   ajouterPiscine(): void {
-    this.router.navigate(['/piscines/ajouter']);
+    this.router.navigate(['/admin/piscines/ajouter']);
   }
 
   modifierPiscine(id: number): void {
-    this.router.navigate(['/piscines/modifier', id]);
+    this.router.navigate(['/admin/piscines/modifier', id]);
   }
 
   supprimerPiscine(id: number): void {

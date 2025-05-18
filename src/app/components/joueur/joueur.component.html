@@ -1,0 +1,28 @@
+<div class="joueur-container">
+  <header class="header">
+    <div class="welcome-section">
+      <h1>Bienvenue dans la Fédération Tunisienne de Tennis</h1>
+      <div class="profile-icon">
+        <img src="assets/images/téléchargement.png" alt="Profile" (click)="showProfile()">
+      </div>
+    </div>
+    
+    <nav class="nav-menu">
+      <ul>
+        <li><a routerLink="competitions" routerLinkActive="active">Competition</a></li>
+        <li><a routerLink="inscriptions/user" routerLinkActive="active">Inscriptions</a></li>
+       
+      </ul>
+    </nav>
+  </header>
+
+  <main class="main-content">
+    <section class="team-section">
+      <h2>Notre Équipe</h2>
+      <!-- Ici vous pouvez ajouter des cartes de joueurs -->
+      <router-outlet></router-outlet>
+    </section>
+    
+   
+  </main>
+</div>

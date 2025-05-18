@@ -89,7 +89,7 @@ export class CompetitionCardsComponent implements OnInit, OnDestroy {
     );
   
     if (typeKey) {
-      this.router.navigate(['/competitions/ajouter'], {
+      this.router.navigate(['admin/competitions/ajouter'], {
         queryParams: { type: typeKey }
       });
     } else {

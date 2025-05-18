@@ -1,0 +1,146 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    padding: 20px;
+  }
+  
+  .register-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+  }
+  
+  .register-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  
+  .register-header h2 {
+    color: #0066cc;
+    margin: 10px 0 5px;
+  }
+  
+  .register-header p {
+    color: #0066cc;
+    margin: 0;
+  }
+  
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-group {
+    position: relative;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 800;
+  }
+  
+  .form-group input, 
+  .form-group select {
+    width: 90%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  
+  .form-group i {
+    position: absolute;
+    left: 15px;
+    top: 40px;
+    color: #777;
+  }
+  
+  .password-group input {
+    padding-right: 18px;
+  }
+  
+  .toggle-password {
+    position: absolute;
+    right: 20px;
+    top: 40px;
+    cursor: pointer;
+    color: #777;
+  }
+  .info-text {
+    color: #ff6b00;
+    font-size: 0.9rem;
+    margin-top: 5px;
+  }
+  
+  .register-footer {
+    margin-top: 20px;
+    font-size: 0.9rem;
+  }
+  
+  .register-footer ul {
+    padding-left: 20px;
+    margin: 10px 0;
+  }
+  
+  /* Style pour le champ fichier */
+  input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 5px;
+  }
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .submit-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 15px;
+    color: #666;
+  }
+  
+  .login-link a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  
+  .spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }

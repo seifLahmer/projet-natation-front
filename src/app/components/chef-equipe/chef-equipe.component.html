@@ -1,0 +1,88 @@
+<div class="chef-equipe-container">
+  <div class="header">
+    <h1>Tableau de bord Chef d'Équipe - {{currentUser?.nomClub || 'Mon Club'}}</h1>
+    <button (click)="logout()">Déconnexion</button>
+  </div>
+
+  <div class="content">
+    <h2>Liste des joueurs à ajouter</h2>
+    
+    <div class="add-buttons">
+      <button (click)="showAddForm = true; addMode = 'details'" *ngIf="!showAddForm">Ajouter par informations</button>
+    </div>
+    
+    <div *ngIf="showAddForm" class="form-container">
+      <h3 *ngIf="addMode === 'email'">Ajouter un joueur par email</h3>
+      <h3 *ngIf="addMode === 'details'">Ajouter un joueur par informations</h3>
+      
+      <form [formGroup]="joueurForm" (ngSubmit)="ajouterJoueur()">
+        <div *ngIf="addMode === 'email'" class="form-group">
+          <label>Email:</label>
+          <input type="email" formControlName="email" required>
+          <div *ngIf="joueurForm.get('email')?.invalid && joueurForm.get('email')?.touched" 
+               class="error-message">
+            Email invalide
+          </div>
+        </div>
+
+        <div *ngIf="addMode === 'details'" class="form-details">
+          <div class="form-group">
+            <label>Nom:</label>
+            <input type="text" formControlName="nom" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Prénom:</label>
+            <input type="text" formControlName="prenom" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" formControlName="email" required>
+            <div *ngIf="joueurForm.get('email')?.invalid && joueurForm.get('email')?.touched" 
+                 class="error-message">
+              Email invalide
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Téléphone:</label>
+            <input type="tel" formControlName="telephone">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="!joueurForm.valid">Ajouter</button>
+          <button type="button" (click)="showAddForm = false; joueurForm.reset()">Annuler</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-responsive" *ngIf="joueurs.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Date d'inscription</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let joueur of joueurs">
+            <td>{{ joueur.nom }}</td>
+            <td>{{ joueur.prenom }}</td>
+            <td>{{ joueur.email }}</td>
+            <td>{{ joueur.telephone }}</td>
+            <td>{{ joueur.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="joueurs.length === 0" class="no-data">
+      <p>Aucun joueur sans club enregistré pour le moment</p>
+    </div>
+  </div>
+</div> 

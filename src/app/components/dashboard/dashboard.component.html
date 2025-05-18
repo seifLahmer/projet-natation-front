@@ -1,0 +1,114 @@
+<div class="dashboard-container">
+    <!-- Header avec boutons -->
+    <header class="dashboard-header">
+        <div class="header-content">
+          <div class="logo-container">
+            <img src="assets/images/thumbnail_image (1).png" alt="Logo" class="logo">
+            <h1>Fédération Tunisienne de Natation</h1>
+          </div>
+         <div class="auth-buttons">
+  <a [routerLink]="['/login']" class="btn btn-register">Se connecter</a>
+  <a [routerLink]="['/register']" class="btn btn-register">S'inscrire</a>
+</div>
+        </div>
+    </header>
+  
+    <!-- Diaporama automatique -->
+    <div class="slideshow-container">
+        <div *ngFor="let image of images; let i = index" 
+             class="slide fade" 
+             [class.active]="currentIndex === i"
+             [style.background-image]="'url(' + image + ')'">
+          <div class="slide-content">
+            <h2>Rejoignez la communauté aquatique</h2>
+            <p class="slide-subtitle">Découvrez un monde de compétition, de formation et de passion</p>
+            <div class="cta-buttons">
+              <a [routerLink]="['/register']" class="btn btn-primary">Commencer maintenant</a>
+              <a [routerLink]="['/about']" class="btn btn-secondary">En savoir plus</a>
+            </div>
+          </div>
+        </div>
+        <div class="slideshow-dots">
+          <span *ngFor="let image of images; let i = index" 
+                [class.active]="currentIndex === i"
+                (click)="currentIndex = i"></span>
+        </div>
+    </div>
+  
+    <!-- Contenu principal -->
+    <main class="main-content">
+      <section class="features-section">
+        <h2 class="section-title">Nos Services</h2>
+        <p class="section-description">Tout ce dont vous avez besoin pour progresser en natation</p>
+        
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-trophy"></i>
+            </div>
+            <h3>Compétitions</h3>
+            <p>Participez aux championnats nationaux et internationaux avec notre soutien complet.</p>
+            <a href="#" class="feature-link">Voir le calendrier →</a>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-swimmer"></i>
+            </div>
+            <h3>Formation</h3>
+            <p>Programmes d'entraînement personnalisés pour tous les niveaux et tous les âges.</p>
+            <a href="#" class="feature-link">Découvrir les programmes →</a>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3>Communauté</h3>
+            <p>Connectez-vous avec des nageurs passionnés et des entraîneurs expérimentés.</p>
+            <a href="#" class="feature-link">Rencontrer la communauté →</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  
+    <footer class="main-footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="#">Accueil</a></li>
+            <li><a href="#">Compétitions</a></li>
+            <li><a href="#">Formations</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Ressources</h4>
+          <ul>
+            <li><a href="#">Règlements</a></li>
+            <li><a href="#">Calendrier</a></li>
+            <li><a href="#">Résultats</a></li>
+            <li><a href="#">Médias</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Contact</h4>
+          <p>Email: contact&#64;ftnatation.tn</p>
+          <p>Tél: +216 70 000 000</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2025 Fédération Tunisienne de Natation. Tous droits réservés.</p>
+        <div class="legal-links">
+          <a href="#">Mentions légales</a>
+          <a href="#">Politique de confidentialité</a>
+          <a href="#">Conditions d'utilisation</a>
+        </div>
+      </div>
+    </footer>
+</div>
