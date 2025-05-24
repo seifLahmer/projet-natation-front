@@ -10,10 +10,21 @@ import { AuthService } from '../_services/auth.service';
 })
 export class ChefEquipeComponent implements OnInit {
   joueurs: any[] = [];
+  filteredJoueurs: any[] = [];
+  searchTerm: string = '';
   showAddForm = false;
   addMode: 'email' | 'details' = 'email';
   joueurForm: FormGroup;
   currentUser: any;
+  
+  // Variables pour l'édition
+  showEditModal = false;
+  editForm: FormGroup;
+  selectedJoueur: any;
+  
+  // Variables pour la suppression
+  showDeleteModal = false;
+  joueurToDelete: any;
 
   constructor(
     private fb: FormBuilder,
@@ -26,17 +37,28 @@ export class ChefEquipeComponent implements OnInit {
       prenom: ['', Validators.required],
       telephone: ['']
     });
+    
+    this.editForm = this.fb.group({
+      nom: ['', Validators.required],
+      prenom: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      telephone: ['']
+    });
   }
 
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
     this.loadJoueurs();
-    // Charger les détails complets de l'utilisateur pour avoir le nomClub
     this.loadCurrentUserDetails();
   }
+  viewDetails(joueur: any): void {
+
+  console.log('Détails du joueur :', joueur);
+}
+
 
   loadCurrentUserDetails(): void {
-    this.http.get<any>(`http://localhost:8080/api/auth/user-details?email=${this.currentUser.email}`)
+    this.http.get<any>(`http://localhost:8082/api/auth/user-details?email=${this.currentUser.email}`)
       .subscribe({
         next: (user) => {
           this.currentUser = user;
@@ -46,10 +68,26 @@ export class ChefEquipeComponent implements OnInit {
   }
 
   loadJoueurs(): void {
-    this.http.get<any[]>('http://localhost:8080/api/joueurs/sans-club').subscribe({
-      next: (joueurs) => this.joueurs = joueurs,
+    this.http.get<any[]>('http://localhost:8082/api/joueurs/sans-club').subscribe({
+      next: (joueurs) => {
+        this.joueurs = joueurs;
+        this.filteredJoueurs = [...joueurs];
+      },
       error: (err) => console.error('Erreur lors du chargement des joueurs', err)
     });
+  }
+
+  filterJoueurs(): void {
+    if (!this.searchTerm) {
+      this.filteredJoueurs = [...this.joueurs];
+      return;
+    }
+    
+    const term = this.searchTerm.toLowerCase();
+    this.filteredJoueurs = this.joueurs.filter(joueur => 
+      joueur.nom.toLowerCase().includes(term) || 
+      joueur.prenom.toLowerCase().includes(term)
+    );
   }
 
   ajouterJoueur(): void {
@@ -60,8 +98,8 @@ export class ChefEquipeComponent implements OnInit {
       };
 
       const endpoint = this.addMode === 'email' 
-        ? 'http://localhost:8080/api/joueurs/ajouter-par-email' 
-        : 'http://localhost:8080/api/joueurs/ajouter-par-details';
+        ? 'http://localhost:8082/api/joueurs/ajouter-par-email' 
+        : 'http://localhost:8082/api/joueurs/ajouter-par-details';
 
       this.http.post(endpoint, joueurData).subscribe({
         next: () => {
@@ -84,7 +122,62 @@ export class ChefEquipeComponent implements OnInit {
     }
   }
 
+  editJoueur(joueur: any): void {
+    this.selectedJoueur = joueur;
+    this.editForm.patchValue({
+      nom: joueur.nom,
+      prenom: joueur.prenom,
+      email: joueur.email,
+      telephone: joueur.telephone
+    });
+    this.showEditModal = true;
+  }
+
+  updateJoueur(): void {
+    if (this.editForm.valid) {
+      const updatedData = {
+        ...this.editForm.value,
+        id: this.selectedJoueur.id
+      };
+
+      this.http.put('http://localhost:8082/api/joueurs/modifier', updatedData)
+        .subscribe({
+          next: () => {
+            this.loadJoueurs();
+            this.showEditModal = false;
+            alert('Joueur modifié avec succès!');
+          },
+          error: (err) => {
+            console.error('Erreur lors de la modification', err);
+            alert('Erreur lors de la modification: ' + (err.error?.message || err.message));
+          }
+        });
+    }
+  }
+
+  confirmDelete(joueur: any): void {
+    this.joueurToDelete = joueur;
+    this.showDeleteModal = true;
+  }
+
+  deleteJoueur(): void {
+    this.http.post('http://localhost:8082/api/joueurs/supprimer', { 
+      id: this.joueurToDelete.id,
+      email: this.joueurToDelete.email 
+    }).subscribe({
+      next: () => {
+        this.loadJoueurs();
+        this.showDeleteModal = false;
+        alert('Joueur supprimé avec succès!');
+      },
+      error: (err) => {
+        console.error('Erreur lors de la suppression', err);
+        alert('Erreur lors de la suppression: ' + (err.error?.message || err.message));
+      }
+    });
+  }
+
   logout(): void {
     this.authService.logout();
   }
-} 
+}

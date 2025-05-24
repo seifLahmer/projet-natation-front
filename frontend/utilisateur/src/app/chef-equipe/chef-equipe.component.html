@@ -1,88 +1,175 @@
 <div class="chef-equipe-container">
   <div class="header">
     <h1>Tableau de bord Chef d'Équipe - {{currentUser?.nomClub || 'Mon Club'}}</h1>
-    <button (click)="logout()">Déconnexion</button>
+    <button class="logout" (click)="logout()">
+      <i class="fas fa-sign-out-alt"></i> 
+    </button>
   </div>
 
   <div class="content">
-    <h2>Liste des joueurs à ajouter</h2>
-    
-    <div class="add-buttons">
-      <button (click)="showAddForm = true; addMode = 'details'" *ngIf="!showAddForm">Ajouter par informations</button>
+    <div class="top-section">
+      <h2>
+        <i class="fas fa-users"></i> Liste des joueurs
+        <span class="badge">{{filteredJoueurs.length}}</span>
+      </h2>
+      
+      <div class="right-controls">
+        <div class="search-bar">
+          <input type="text" [(ngModel)]="searchTerm" (input)="filterJoueurs()" placeholder="Rechercher...">
+          <button class="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+        
+        <button class="add-btn" (click)="showAddForm = true; addMode = 'details'" *ngIf="!showAddForm">
+          <i class="fas fa-user-plus"></i> Ajouter Joueur
+        </button>
+      </div>
     </div>
     
     <div *ngIf="showAddForm" class="form-container">
-      <h3 *ngIf="addMode === 'email'">Ajouter un joueur par email</h3>
-      <h3 *ngIf="addMode === 'details'">Ajouter un joueur par informations</h3>
-      
       <form [formGroup]="joueurForm" (ngSubmit)="ajouterJoueur()">
         <div *ngIf="addMode === 'email'" class="form-group">
-          <label>Email:</label>
-          <input type="email" formControlName="email" required>
+          <label><i class="fas fa-at"></i> Email:</label>
+          <input type="email" formControlName="email" required placeholder="email@exemple.com">
           <div *ngIf="joueurForm.get('email')?.invalid && joueurForm.get('email')?.touched" 
                class="error-message">
-            Email invalide
+            <i class="fas fa-exclamation-circle"></i> Email invalide
           </div>
         </div>
 
         <div *ngIf="addMode === 'details'" class="form-details">
           <div class="form-group">
-            <label>Nom:</label>
-            <input type="text" formControlName="nom" required>
+            <label><i class="fas fa-user-tag"></i> Nom:</label>
+            <input type="text" formControlName="nom" required placeholder="Nom du joueur">
           </div>
           
           <div class="form-group">
-            <label>Prénom:</label>
-            <input type="text" formControlName="prenom" required>
+            <label><i class="fas fa-user"></i> Prénom:</label>
+            <input type="text" formControlName="prenom" required placeholder="Prénom du joueur">
           </div>
           
           <div class="form-group">
-            <label>Email:</label>
-            <input type="email" formControlName="email" required>
+            <label><i class="fas fa-at"></i> Email:</label>
+            <input type="email" formControlName="email" required placeholder="email@exemple.com">
             <div *ngIf="joueurForm.get('email')?.invalid && joueurForm.get('email')?.touched" 
                  class="error-message">
-              Email invalide
+              <i class="fas fa-exclamation-circle"></i> Email invalide
             </div>
           </div>
           
           <div class="form-group">
-            <label>Téléphone:</label>
-            <input type="tel" formControlName="telephone">
+            <label><i class="fas fa-phone"></i> Téléphone:</label>
+            <input type="tel" formControlName="telephone" placeholder="06 12 34 56 78">
           </div>
         </div>
 
         <div class="form-actions">
-          <button type="submit" [disabled]="!joueurForm.valid">Ajouter</button>
-          <button type="button" (click)="showAddForm = false; joueurForm.reset()">Annuler</button>
+          <button type="submit" [disabled]="!joueurForm.valid" class="submit-btn">
+            <i class="fas fa-check"></i> Confirmer
+          </button>
+          <button type="button" (click)="showAddForm = false; joueurForm.reset()" class="cancel-btn">
+            <i class="fas fa-times"></i> Annuler
+          </button>
         </div>
       </form>
     </div>
 
-    <div class="table-responsive" *ngIf="joueurs.length > 0">
+    <div class="table-responsive" *ngIf="filteredJoueurs.length > 0">
       <table>
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Prénom</th>
-            <th>Email</th>
-            <th>Téléphone</th>
-            <th>Date d'inscription</th>
+            <th><i class="fas fa-user-tag"></i> Nom</th>
+            <th><i class="fas fa-user"></i> Prénom</th>
+            <th><i class="fas fa-at"></i> Email</th>
+            <th><i class="fas fa-phone"></i> Téléphone</th>
+            <th><i class="fas fa-calendar-alt"></i> Date d'inscription</th>
+            <th class="actions-header"><i class="fas fa-cog"></i> Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let joueur of joueurs">
+          <tr *ngFor="let joueur of filteredJoueurs">
             <td>{{ joueur.nom }}</td>
             <td>{{ joueur.prenom }}</td>
             <td>{{ joueur.email }}</td>
-            <td>{{ joueur.telephone }}</td>
+            <td>{{ joueur.telephone || 'N/A' }}</td>
             <td>{{ joueur.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="actions">
+              <button (click)="editJoueur(joueur)" class="edit-btn" title="Modifier">
+                <i class="fas fa-edit"></i> 
+              </button>
+              <button (click)="confirmDelete(joueur)" class="delete-btn" title="Supprimer">
+                <i class="fas fa-trash-alt"></i> 
+              </button>
+              <button (click)="viewDetails(joueur)" class="view-btn" title="Détails">
+                <i class="fas fa-eye"></i> 
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div *ngIf="joueurs.length === 0" class="no-data">
-      <p>Aucun joueur sans club enregistré pour le moment</p>
+    <!-- Modal d'édition -->
+    <div *ngIf="showEditModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" (click)="showEditModal = false">&times;</span>
+        <h3><i class="fas fa-user-edit"></i> Modifier le joueur</h3>
+        <form [formGroup]="editForm" (ngSubmit)="updateJoueur()">
+          <div class="form-group">
+            <label><i class="fas fa-user-tag"></i> Nom:</label>
+            <input type="text" formControlName="nom" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Prénom:</label>
+            <input type="text" formControlName="prenom" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-at"></i> Email:</label>
+            <input type="email" formControlName="email" required>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Téléphone:</label>
+            <input type="tel" formControlName="telephone">
+          </div>
+          <div class="form-actions">
+            <button type="submit" [disabled]="!editForm.valid" class="submit-btn">
+              <i class="fas fa-save"></i> Enregistrer
+            </button>
+            <button type="button" (click)="showEditModal = false" class="cancel-btn">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div *ngIf="showDeleteModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" (click)="showDeleteModal = false">&times;</span>
+        <h3><i class="fas fa-exclamation-triangle"></i> Confirmer la suppression</h3>
+        <p>Êtes-vous sûr de vouloir supprimer ce joueur ? Un email lui sera envoyé pour l'informer.</p>
+        <div class="form-actions">
+          <button (click)="deleteJoueur()" class="delete-btn">
+            <i class="fas fa-check"></i> Confirmer
+          </button>
+          <button (click)="showDeleteModal = false" class="cancel-btn">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredJoueurs.length === 0" class="no-data">
+      <div class="empty-state">
+        <i class="fas fa-users-slash"></i>
+        <h3>Aucun joueur trouvé</h3>
+        <p>Essayez de modifier vos critères de recherche ou ajoutez un nouveau joueur.</p>
+        <button (click)="showAddForm = true; addMode = 'details'" class="add-btn">
+          <i class="fas fa-user-plus"></i> Ajouter un joueur
+        </button>
+      </div>
     </div>
   </div>
-</div> 
+</div>

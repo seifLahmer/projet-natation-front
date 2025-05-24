@@ -69,7 +69,7 @@ export class RegisterComponent {
       formData.append('documentJustificatif', this.selectedFile);
     }
 
-    this.http.post('http://localhost:8080/api/auth/register', formData)
+    this.http.post('http://localhost:8082/api/auth/register', formData)
       .subscribe({
         next: (response: any) => {
           this.loading = false;

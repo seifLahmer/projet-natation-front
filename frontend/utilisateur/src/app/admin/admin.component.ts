@@ -30,13 +30,13 @@ export class AdminComponent implements OnInit {
   }
 
   loadChefsEnAttente(): void {
-    this.http.get<any[]>('http://localhost:8080/api/admin/chefs-a-valider')
+    this.http.get<any[]>('http://localhost:8082/api/admin/chefs-a-valider')
       .subscribe({
         next: (data) => {
           this.chefsEnAttente = data.map(chef => ({
             ...chef,
             documentPath: chef.documentPath ? 
-                        `http://localhost:8080${chef.documentPath}` : 
+                        `http://localhost:8082${chef.documentPath}` : 
                         null
           }));
           this.loading = false;
@@ -49,7 +49,7 @@ export class AdminComponent implements OnInit {
   }
 
   loadStats(): void {
-    this.http.get<any>('http://localhost:8080/api/admin/stats')
+    this.http.get<any>('http://localhost:8082/api/admin/stats')
       .subscribe({
         next: (data) => {
           this.stats = data;
@@ -61,7 +61,7 @@ export class AdminComponent implements OnInit {
   }
 
   loadLastActivities(): void {
-    this.http.get<any[]>('http://localhost:8080/api/admin/activities')
+    this.http.get<any[]>('http://localhost:8082/api/admin/activities')
       .subscribe({
         next: (data) => {
           this.lastActivities = data;
@@ -73,7 +73,7 @@ export class AdminComponent implements OnInit {
   }
 
   validerChef(id: number): void {
-    this.http.post(`http://localhost:8080/api/admin/valider-chef/${id}`, {})
+    this.http.post(`http://localhost:8082/api/admin/valider-chef/${id}`, {})
       .subscribe({
         next: () => {
           alert('Chef validé avec succès');
@@ -90,7 +90,7 @@ export class AdminComponent implements OnInit {
 
   rejeterChef(id: number): void {
     if (confirm('Êtes-vous sûr de vouloir rejeter ce chef de club ?')) {
-      this.http.delete(`http://localhost:8080/api/admin/rejeter-chef/${id}`)
+      this.http.delete(`http://localhost:8082/api/admin/rejeter-chef/${id}`)
         .subscribe({
           next: () => {
             alert('Chef rejeté avec succès');
@@ -112,7 +112,7 @@ export class AdminComponent implements OnInit {
   }
 
   saveModifications(): void {
-    this.http.put(`http://localhost:8080/api/admin/modifier-chef/${this.selectedChef.id}`, this.selectedChef)
+    this.http.put(`http://localhost:8082/api/admin/modifier-chef/${this.selectedChef.id}`, this.selectedChef)
       .subscribe({
         next: () => {
           alert('Chef modifié avec succès');
