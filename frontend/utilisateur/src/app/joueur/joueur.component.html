@@ -15,14 +15,129 @@
       </ul>
     </nav>
   </header>
-
+ <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> 
+      </button>
   <main class="main-content">
     <section class="team-section">
       <h2>Notre Équipe</h2>
       <p>Découvrez les joueurs et staff de la fédération</p>
       <!-- Ici vous pouvez ajouter des cartes de joueurs -->
     </section>
-    
-   
   </main>
+
+ <!-- Modal de profil (version améliorée) -->
+<div *ngIf="showProfileModal" class="profile-modal">
+  <div class="modal-content">
+    <span class="close" (click)="showProfileModal = false">&times;</span>
+    <div class="modal-header">
+      <i class="fas fa-user-circle user-icon"></i>
+      <h2>Mon Profil</h2>
+    </div>
+    
+    <div class="profile-info" *ngIf="userDetails">
+      <div class="info-row">
+        <span class="label"><i class="fas fa-id-card"></i> Nom:</span>
+        <span class="value">{{userDetails.nom}}</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-signature"></i> Prénom:</span>
+        <span class="value">{{userDetails.prenom}}</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-envelope"></i> Email:</span>
+        <span class="value">{{userDetails.email}}</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-phone"></i> Téléphone:</span>
+        <span class="value">{{userDetails.telephone || 'Non renseigné'}}</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-tshirt"></i> Club:</span>
+        <span class="value">{{userDetails.nomClub || 'Non renseigné'}}</span>
+      </div>
+      <div class="info-row">
+        <span class="label"><i class="fas fa-calendar-alt"></i> Date d'inscription:</span>
+        <span class="value">{{userDetails.dateCreation | date:'dd/MM/yyyy'}}</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="edit-btn" (click)="openEditModal()">
+        <i class="fas fa-edit"></i> Modifier le profil
+      </button>
+     
+    </div>
+  </div>
+</div>
+
+<!-- Modal d'édition (version améliorée) -->
+<div *ngIf="showEditModal" class="profile-modal">
+  <div class="modal-content edit-modal">
+    <span class="close" (click)="showEditModal = false">&times;</span>
+    <div class="modal-header">
+      <i class="fas fa-user-edit edit-icon"></i>
+      <h2>Modifier mon profil</h2>
+    </div>
+    
+    <form [formGroup]="editForm" (ngSubmit)="updateProfile()">
+      <div class="form-group">
+        <label for="nom"><i class="fas fa-id-card"></i> Nom</label>
+        <div class="input-with-icon">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="nom" formControlName="nom" class="form-control">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="prenom"><i class="fas fa-signature"></i> Prénom</label>
+        <div class="input-with-icon">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="prenom" formControlName="prenom" class="form-control">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+        <div class="input-with-icon">
+          <i class="fas fa-at input-icon"></i>
+          <input type="email" id="email" formControlName="email" class="form-control">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="telephone"><i class="fas fa-phone"></i> Téléphone</label>
+        <div class="input-with-icon">
+          <i class="fas fa-phone-alt input-icon"></i>
+          <input type="text" id="telephone" formControlName="telephone" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="nomClub"><i class="fas fa-tshirt"></i> Club</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="text" id="nomClub" formControlName="nomClub" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="dateCreation"><i class="fas fa-calendar-alt"></i> Date d'inscription</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="text" id="dateCreation" [value]="userDetails.dateCreation | date:'dd/MM/yyyy'" class="form-control" readonly>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-btn" (click)="showEditModal = false">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+        <button type="submit" class="save-btn" [disabled]="!editForm.valid">
+          <i class="fas fa-save"></i> Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 </div>

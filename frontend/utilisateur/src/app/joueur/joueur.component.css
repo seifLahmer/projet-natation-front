@@ -6,6 +6,141 @@
   padding: 20px;
 }
 
+/* Styles pour les modals */
+.profile-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  border: 1px solid #e0e0e0;
+}
+
+.edit-modal {
+  max-width: 500px;
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+  margin: 10px 0 5px;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.user-icon, .edit-icon {
+  font-size: 2.5rem;
+  color: #3498db;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.close:hover {
+  color: #333;
+}
+
+.profile-info {
+  margin: 25px 0;
+}
+
+.info-row {
+  display: flex;
+  margin-bottom: 18px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.label {
+  font-weight: 600;
+  width: 160px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+}
+
+.label i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+  color: #3498db;
+}
+
+.value {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  color: #555;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 25px;
+  gap: 10px;
+}
+
+/* Styles spécifiques pour le formulaire d'édition */
+.edit-modal .form-group {
+  margin-bottom: 15px;
+}
+
+.edit-modal .input-with-icon {
+  position: relative;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.edit-modal .form-control {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.edit-modal .form-control:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.edit-modal .form-control[readonly] {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  max-width: 350px;
+}
+
 /* En-tête */
 .header {
   background-color: #f8f9fa;
@@ -78,6 +213,99 @@
   margin-top: 0;
 }
 
+/* Boutons */
+.edit-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.save-btn {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.save-btn:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+
+.save-btn:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.cancel-btn {
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  background-color: #7f8c8d;
+  transform: translateY(-2px);
+}
+
+/* Bouton de déconnexion */
+.logout-btn {
+  background-color: transparent;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: auto;
+  height: auto;
+}
+
+.logout-btn:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.logout-btn i {
+  font-size: 16px;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .welcome-section {
@@ -96,5 +324,27 @@
   .nav-menu li {
     margin-right: 0;
     margin-bottom: 10px;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .value {
+    width: 100%;
+  }
+
+  .edit-modal .input-with-icon {
+    max-width: 100%;
   }
 }

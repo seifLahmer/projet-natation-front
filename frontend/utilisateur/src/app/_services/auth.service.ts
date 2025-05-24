@@ -25,13 +25,12 @@ export class AuthService {
           sessionStorage.setItem('currentUser', JSON.stringify(response.user));
           this.currentUserSubject.next(response.user);
           
-          // Redirection basée sur le rôle
           if (response.user.role === 'ADMIN') {
             this.router.navigate(['/admin']);
           } else if (response.user.role === 'CHEF_EQUIPE') {
             this.router.navigate(['/chef-equipe']); 
           } else if (response.user.role === 'JOUEUR') {
-            this.router.navigate(['/joueur']); // Redirection vers l'interface joueur
+            this.router.navigate(['/joueur']);
           } else {
             this.router.navigate(['/dashboard']);
           }
@@ -65,7 +64,8 @@ export class AuthService {
     const user = this.currentUserValue;
     return user && user.role === 'JOUEUR';
   }
-   forgotPassword(email: string): Observable<any> {
+
+  forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/forgot-password`, { email }).pipe(
       catchError(error => {
         let errorMsg = 'Une erreur est survenue';
@@ -79,10 +79,26 @@ export class AuthService {
     );
   }
 
+  getUserDetails(email: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user-details?email=${email}`);
+  }
+
   resetPassword(email: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/reset-password`, { email, newPassword }).pipe(
       catchError(error => {
         let errorMsg = 'Une erreur est survenue';
+        if (error.error?.error) {
+          errorMsg = error.error.error;
+        }
+        return throwError(() => errorMsg);
+      })
+    );
+  }
+
+  updateProfile(userData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update-profile`, userData).pipe(
+      catchError(error => {
+        let errorMsg = 'Erreur lors de la mise à jour du profil';
         if (error.error?.error) {
           errorMsg = error.error.error;
         }
