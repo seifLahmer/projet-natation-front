@@ -3,7 +3,7 @@ import { Inscription } from './inscription';
 import { Resultat } from './resultat';
 
 export class User {
-  id: number;
+  id?: number;
   nom: string;
   prenom: string;
   naissance: Date;
@@ -14,7 +14,7 @@ export class User {
   document_path: string;
   active: boolean;
   date_creation: Date;
-  role: string;
+  role?: string;
   club_id: number;
   nomClub: string;
   adresseClub: string;

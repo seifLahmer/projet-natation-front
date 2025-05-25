@@ -1,53 +1,47 @@
-// ajout-resultat.component.ts
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { User } from 'src/app/models/user';
-import { Competition } from 'src/app/models/competition';
+import { Competition, TypeCompetition } from 'src/app/models/competition';
 import { Resultat } from 'src/app/models/resultat';
 import { ResultatService } from 'src/app/services/resultat/resultat.service';
-import { TypeCompetition } from 'src/app/models/competition';
-
+import { CompetitionService } from 'src/app/services/competition.service'; // Nouveau service
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-ajout-resultat',
   templateUrl: './ajouter-resultat.component.html',
   styleUrls: ['./ajouter-resultat.component.scss']
 })
 export class AjoutResultatComponent implements OnInit {
-  // Étape actuelle (1, 2, 3)
   currentStep: number = 1;
-  
-  // Formulaires pour chaque étape
+
+  // Formulaires
   userFilterForm: FormGroup;
   competitionForm: FormGroup;
   resultatForm: FormGroup;
-  
+
   // Données
-  users: User[] = [];
   competitions: Competition[] = [];
-  filteredUsers: User[] = [];
   filteredCompetitions: Competition[] = [];
   
+  // Utilisateurs inscrits à la compétition sélectionnée
+  registeredUsers: User[] = [];
+  filteredUsers: User[] = [];
+
   // Sélections
   selectedUser: User | null = null;
   selectedCompetition: Competition | null = null;
-  
-  // Filtre utilisateurs
-  searchTerm: string = '';
-  filterNation: string = '';
-  filterClub: string = '';
-  
-  // Filtre compétitions
+
+  // Filtres
   competitionTypes = Object.values(TypeCompetition);
-  selectedType: string = '';
-  
-  // État de chargement
+
   loading = false;
-  
+
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private http: HttpClient,
-    private resultatService: ResultatService
+    private resultatService: ResultatService,
+    private competitionService: CompetitionService // Injection du nouveau service
   ) {
     // Initialisation des formulaires
     this.userFilterForm = this.fb.group({
@@ -55,11 +49,11 @@ export class AjoutResultatComponent implements OnInit {
       nation: [''],
       club: ['']
     });
-    
+
     this.competitionForm = this.fb.group({
-      type: ['', Validators.required]
+      type: ['']
     });
-    
+
     this.resultatForm = this.fb.group({
       place: [null, [Validators.required, Validators.min(1)]],
       temps: ['', [Validators.required, Validators.pattern(/^\d{2}:\d{2}\.\d{2}$/)]],
@@ -67,160 +61,200 @@ export class AjoutResultatComponent implements OnInit {
       tempsDePassage: ['']
     });
   }
-  
+
   ngOnInit(): void {
-    // Chargement initial des utilisateurs
-    this.loadUsers();
-    
-    // Chargement initial des compétitions
     this.loadCompetitions();
-    
-    // Abonnement aux changements de filtre utilisateur
+
+    // Filtrage des compétitions quand le type change
+    this.competitionForm.valueChanges.subscribe(() => {
+      this.filterCompetitions();
+    });
+
+    // Filtrage des utilisateurs quand les filtres changent
     this.userFilterForm.valueChanges.subscribe(() => {
       this.filterUsers();
     });
   }
-  
-  // Fonction pour charger les utilisateurs
-  loadUsers(): void {
-    this.loading = true;
-    this.http.get<User[]>('http://localhost:8082/api/users').subscribe(
-      (data) => {
-        this.users = data;
-        this.filteredUsers = [...this.users];
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Error loading users', error);
-        this.loading = false;
-      }
-    );
-  }
-  
-  // Fonction pour charger les compétitions
-  loadCompetitions(): void {
-    this.loading = true;
-    this.http.get<Competition[]>('http://localhost:8082/api/competitions').subscribe(
-      (data) => {
-        this.competitions = data;
-        this.filteredCompetitions = [...this.competitions];
-        this.loading = false;
-      },
-      (error) => {
-        console.error('Error loading competitions', error);
-        this.loading = false;
-      }
-    );
-  }
-  
-  // Filtrer les utilisateurs selon les critères
-  filterUsers(): void {
-    const { searchTerm, nation, club } = this.userFilterForm.value;
-    
-    this.filteredUsers = this.users.filter(user => {
-      // Filtre de recherche (nom, prénom, email)
-      const matchSearch = !searchTerm || 
-        user.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      // Filtre par nationalité
-      const matchNation = !nation || user.nation === nation;
-      
-      // Filtre par club
-      const matchClub = !club || user.nomClub.toLowerCase().includes(club.toLowerCase());
-      
-      return matchSearch && matchNation && matchClub;
-    });
-  }
-  
-  // Filtrer les compétitions par type
-  filterCompetitions(): void {
-    const type = this.competitionForm.get('type')?.value;
-    
-    if (!type) {
-      this.filteredCompetitions = [...this.competitions];
-      return;
-    }
-    
-    this.filteredCompetitions = this.competitions.filter(comp => 
-      comp.typeC === type
-    );
-  }
-  
-  // Sélection d'un utilisateur
-  selectUser(user: User): void {
-    this.selectedUser = user;
-  }
-  
-  // Sélection d'une compétition
-  selectCompetition(competition: Competition): void {
-    this.selectedCompetition = competition;
-  }
-  
-  // Passer à l'étape suivante
+
+  // Étapes
   nextStep(): void {
-    if (this.currentStep === 1 && this.selectedUser) {
+    if (this.currentStep === 1 && this.selectedCompetition) {
+      console.log('Compétition sélectionnée:', this.selectedCompetition);
+      console.log('ID de la compétition:', this.selectedCompetition.idReservation);
+      
+      // Charger les utilisateurs inscrits à cette compétition
+      this.loadRegisteredUsers(this.selectedCompetition.idReservation);
       this.currentStep = 2;
-    } else if (this.currentStep === 2 && this.selectedCompetition) {
+    } else if (this.currentStep === 2 && this.selectedUser) {
       this.currentStep = 3;
     }
   }
-  
-  // Retour à l'étape précédente
+
   prevStep(): void {
     if (this.currentStep > 1) {
       this.currentStep--;
     }
   }
-  
-  // Extraction des nationalités uniques pour le filtre
-  get uniqueNations(): string[] {
-    return [...new Set(this.users.map(user => user.nation))].filter(Boolean);
+
+  // Chargement des compétitions avec le service
+  loadCompetitions(): void {
+    this.loading = true;
+    this.competitionService.getAllCompetitions().subscribe({
+      next: (data) => {
+        console.log('Compétitions chargées:', data);
+        this.competitions = data;
+        this.filteredCompetitions = [...this.competitions];
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des compétitions:', error);
+        this.loading = false;
+      }
+    });
   }
-  
-  // Extraction des clubs uniques pour le filtre
-  get uniqueClubs(): string[] {
-    return [...new Set(this.users.map(user => user.nomClub))].filter(Boolean);
+  apiUrl = 'http://localhost:8082/api/competitions'
+  // Nouvelle méthode : Charger les utilisateurs inscrits à une compétition// Cette méthode va dans votre COMPOSANT (ajouter-resultat.component.ts)
+// Pas dans le service !
+ getUsersByCompetitionId(competitionId: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/${competitionId}/users`);
   }
+loadRegisteredUsers(competitionId: number): void {
+  this.loading = true;
+  console.log('Chargement des utilisateurs pour la compétition ID:', competitionId);
   
-  // Soumission du formulaire
+ this.getUsersByCompetitionId(competitionId).subscribe({
+    next: (data) => {
+      console.log('Utilisateurs inscrits chargés:', data);
+      this.registeredUsers = data;
+      this.filteredUsers = [...this.registeredUsers];
+      this.loading = false;
+      
+      if (data.length === 0) {
+        console.warn('Aucun utilisateur inscrit pour cette compétition');
+      }
+    },
+    error: (error) => {
+      console.error('Erreur lors du chargement des utilisateurs inscrits:', error);
+      this.registeredUsers = [];
+      this.filteredUsers = [];
+      this.loading = false;
+    }
+  });
+}
+
+  // Filtres - Modifié pour utiliser registeredUsers
+  filterUsers(): void {
+    const { searchTerm, nation, club } = this.userFilterForm.value;
+
+    this.filteredUsers = this.registeredUsers.filter(user => {
+      const matchSearch = !searchTerm ||
+        user.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.prenom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchNation = !nation || user.nation === nation;
+      const matchClub = !club || user.nomClub.toLowerCase().includes(club.toLowerCase());
+
+      return matchSearch && matchNation && matchClub;
+    });
+  }
+
+  filterCompetitions(): void {
+    const type = this.competitionForm.get('type')?.value;
+
+    if (!type) {
+      this.filteredCompetitions = [...this.competitions];
+      return;
+    }
+
+    this.filteredCompetitions = this.competitions.filter(comp =>
+      comp.typeC === type
+    );
+  }
+
+  // Sélections
+  selectUser(user: User): void {
+    this.selectedUser = user;
+    console.log('Utilisateur sélectionné:', user);
+  }
+
+  selectCompetition(competition: Competition): void {
+    this.selectedCompetition = competition;
+    console.log('Compétition sélectionnée:', competition);
+  }
+
+  // Soumission
   submitForm(): void {
     if (this.resultatForm.valid && this.selectedUser && this.selectedCompetition) {
       const formData = this.resultatForm.value;
-      
+  
+      // Formatter le temps (on laisse tel quel car il est de type string dans l'entité)
+      const formattedTemps = this.formatChrono(formData.temps);
+  
+      // Formatter tempsDePassage en "HH:mm:ss.SSS"
+      const formattedTempsDePassage = this.formatToLocalTime(formData.tempsDePassage);
+  
       const resultat: Resultat = {
         place: formData.place,
-        temps: formData.temps,
+        temps: formattedTemps,
         points: formData.points,
-        tempsDePassage: formData.tempsDePassage,
-        user: this.selectedUser,
+        tempsDePassage: formattedTempsDePassage,
+        utilisateurs: this.selectedUser,
         competition: this.selectedCompetition
       };
-      
+      console.log('Résultat à soumettre:', resultat);
+  
       this.loading = true;
-      this.resultatService.createResultat(resultat).subscribe(
-        (response) => {
+      this.resultatService.createResultat(resultat).subscribe({
+        next: (response) => {
+          console.log('Résultat créé avec succès:', response);
           alert('Résultat enregistré avec succès !');
           this.resetForm();
           this.loading = false;
         },
-        (error) => {
-          console.error('Erreur lors de la création du résultat', error);
+        error: (error) => {
+          console.error('Erreur lors de la création du résultat:', error);
           alert('Erreur lors de l\'enregistrement du résultat');
           this.loading = false;
         }
-      );
+      });
     }
   }
   
-  // Réinitialisation du formulaire
+  // Exemple : "58.54" → "00:00:58.540"
+  formatToLocalTime(input: string): string {
+    // Supposons que l'utilisateur entre "58.450"
+    const [secondes, millisecondes] = input.split('.');
+    const paddedMillis = millisecondes?.padEnd(3, '0') ?? '000';
+    
+    // Retourne un format LocalTime valide : HH:mm:ss.SSS
+    return `00:00:${secondes.padStart(2, '0')}.${paddedMillis}`;
+  }
+  
+  // Facultatif : permet de forcer un format sur le champ "temps" si nécessaire
+  formatChrono(input: string): string {
+    return input; // ici on laisse tel quel, ex : "00:58.45"
+  }
+
+  // Réinitialisation
   resetForm(): void {
     this.currentStep = 1;
     this.selectedUser = null;
     this.selectedCompetition = null;
+    this.registeredUsers = [];
     this.userFilterForm.reset();
     this.competitionForm.reset();
     this.resultatForm.reset();
+    this.filteredCompetitions = [...this.competitions];
+    this.filteredUsers = [];
+  }
+
+  // Helpers - Modifiés pour utiliser registeredUsers
+  get uniqueNations(): string[] {
+    return [...new Set(this.registeredUsers.map(user => user.nation))].filter(Boolean);
+  }
+
+  get uniqueClubs(): string[] {
+    return [...new Set(this.registeredUsers.map(user => user.nomClub))].filter(Boolean);
   }
 }

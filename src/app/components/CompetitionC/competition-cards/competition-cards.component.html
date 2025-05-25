@@ -1,23 +1,4 @@
-<!-- Hero section avec carousel d'images -->
-<div class="hero-section position-relative">
-    <div class="hero-image-container">
-        <img [src]="currentImageUrl" class="hero-image" alt="Image natation" />
-        <div class="hero-overlay"></div>
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <i class="fas fa-trophy text-warning me-3"></i>
-                Compétitions de Natation
-            </h1>
-            <p class="hero-subtitle">Découvrez et planifiez vos compétitions</p>
-        </div>
-    </div>
-    <!-- Indicateurs de carousel -->
-    <div class="carousel-indicators">
-        <button *ngFor="let img of imageUrls; let i = index" [class.active]="i === imageIndex"
-            (click)="setCurrentImage(i)">
-        </button>
-    </div>
-</div>
+
 
 <div class="container mt-4">
     <div class="row">

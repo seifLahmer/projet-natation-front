@@ -225,7 +225,7 @@
                                 </td>
                                 <td class="align-middle text-center">
                                     <div class="btn-group" role="group">
-                                        <button class="btn btn-outline-primary btn-sm"
+                                        <button *ngIf="userRole === 'ADMIN'"class="btn btn-outline-primary btn-sm"
                                             (click)="modifierCompetition(competition.idReservation)"
                                             title="Modifier la compétition" data-bs-toggle="tooltip"
                                             data-bs-placement="top">
@@ -233,7 +233,7 @@
                                             <span class="ms-1 d-none d-xl-inline">Modifier</span>
                                         </button>
 
-                                        <button class="btn btn-outline-danger btn-sm"
+                                        <button *ngIf="userRole === 'ADMIN'"class="btn btn-outline-danger btn-sm"
                                             (click)="supprimerCompetition(competition.idReservation)"
                                             title="Supprimer la compétition" data-bs-toggle="tooltip"
                                             data-bs-placement="top">
@@ -254,7 +254,7 @@
                         </tbody>
                     </table>
                 </div>
-
+                <small class="text-muted">Rôle: {{ userRole }}</small>
                 <!-- Vue cartes -->
                 <div class="row g-3 p-3" *ngIf="isCardView">
                     <div class="col-md-6 col-lg-4" *ngFor="let competition of filteredCompetitions">
@@ -307,14 +307,15 @@
                                         }}</span>
                                 </div>
                             </div>
+                          
                             <div class="card-footer bg-light border-0">
                                 <div class="d-flex gap-1 justify-content-center">
-                                    <button class="btn btn-outline-primary btn-sm"
+                                    <button *ngIf="userRole === 'ADMIN'" class="btn btn-outline-primary btn-sm"
                                         (click)="modifierCompetition(competition.idReservation)" title="Modifier">
                                         <i class="fas fa-edit"></i>
-                                        Modifier
+                                        Modifier (si ADMIN)
                                     </button>
-                                    <button class="btn btn-outline-danger btn-sm"
+                                    <button *ngIf="userRole === 'ADMIN'" class="btn btn-outline-danger btn-sm"
                                         (click)="supprimerCompetition(competition.idReservation)" title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                         Supprimer
@@ -325,6 +326,8 @@
                                         S'inscrire
                                     </button>
                                 </div>
+                                <!-- Affichage de debug -->
+                               
                             </div>
                         </div>
                     </div>

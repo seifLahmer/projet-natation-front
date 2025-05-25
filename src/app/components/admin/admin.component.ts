@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import { Router, NavigationEnd, Event } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { AuthService } from 'src/app/services/_services/auth.service';
 
 @Component({
   selector: 'app-admin',
@@ -23,31 +24,38 @@ export class AdminComponent implements OnInit, OnDestroy {
   };
   loading = false;
   
-  // Déclarer la variable de souscription mais ne pas l'injecter dans le constructeur
   private routerSubscription!: Subscription;
   
   constructor(
     private http: HttpClient, 
     private router: Router,
-    private datePipe: DatePipe
-    // Retiré l'injection de routerSubscription
+    private datePipe: DatePipe,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    // Utiliser filter avec une assertion de type pour garantir que l'événement est de type NavigationEnd
     this.routerSubscription = this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event) => {
+      // Pour routes plates : vérifier si on est exactement sur /admin
       this.isChildRouteActive = event.url !== '/admin';
+      
+      // Charger les données seulement si on est sur la page principale admin
+      if (event.url === '/admin') {
+        this.loadChefsEnAttente();
+        this.loadStats();
+      }
     });
     
-    this.loadChefsEnAttente();
-    this.loadStats();
-    this.loadLastActivities();
+    // Chargement initial seulement si on est sur /admin
+    if (this.router.url === '/admin') {
+      this.loadChefsEnAttente();
+      this.loadStats();
+    }
   }
 
   loadChefsEnAttente(): void {
-    this.loading = true; // Définir loading à true avant la requête
+    this.loading = true;
     this.http.get<any[]>('http://localhost:8082/api/admin/chefs-a-valider')
       .subscribe({
         next: (data) => {
@@ -62,8 +70,7 @@ export class AdminComponent implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Erreur:', err);
           this.loading = false;
-          // Gérer l'erreur plus efficacement
-          this.chefsEnAttente = []; // Tableau vide en cas d'erreur
+          this.chefsEnAttente = [];
         }
       });
   }
@@ -76,25 +83,10 @@ export class AdminComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Erreur lors du chargement des statistiques:', err);
-          // Utiliser des valeurs par défaut en cas d'erreur
           this.stats = {
             chefsValides: 0,
             clubsEnregistres: 0
           };
-        }
-      });
-  }
-
-  loadLastActivities(): void {
-    this.http.get<any[]>('http://localhost:8082/api/admin/activities')
-      .subscribe({
-        next: (data) => {
-          this.lastActivities = data;
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des activités:', err);
-          // Utiliser des données fictives en cas d'erreur
-          this.lastActivities = [{ action: 'Aucune activité récente disponible' }];
         }
       });
   }
@@ -106,7 +98,6 @@ export class AdminComponent implements OnInit, OnDestroy {
           alert('Chef validé avec succès');
           this.loadChefsEnAttente();
           this.loadStats();
-          this.loadLastActivities();
         },
         error: (err) => {
           console.error('Erreur lors de la validation:', err);
@@ -123,7 +114,6 @@ export class AdminComponent implements OnInit, OnDestroy {
             alert('Chef rejeté avec succès');
             this.loadChefsEnAttente();
             this.loadStats();
-            this.loadLastActivities();
           },
           error: (err) => {
             console.error('Erreur lors du rejet:', err);
@@ -159,13 +149,10 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    // Ici, vous pourriez ajouter la logique de déconnexion avant la navigation
-    localStorage.removeItem('token'); // Si vous stockez un token
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
   
   ngOnDestroy() {
-    // Nettoyage pour éviter les fuites de mémoire
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }

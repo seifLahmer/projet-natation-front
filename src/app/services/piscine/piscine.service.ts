@@ -9,7 +9,7 @@ import { Piscine } from '../../models/piscine'; // Adjust the import path as nec
 })
 export class PiscineService {
 
-  private baseUrl = 'http://localhost:8082/api/piscines'; // Adjust URL to match your backend
+  private baseUrl = 'http://localhost:8082/api/admin/piscines'; // Adjust URL to match your backend
 
   constructor(private http: HttpClient) { }
 

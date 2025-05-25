@@ -1,0 +1,249 @@
+<div class="resultats-container">
+    <!-- En-tête avec titre et actions -->
+    <div class="header-section">
+        <div class="title-section">
+            <h2 class="page-title">
+                <i class="fas fa-trophy"></i>
+                Gestion des Résultats
+            </h2>
+            <p class="page-subtitle">Visualisez et gérez tous les résultats des compétitions</p>
+        </div>
+
+        <div class="header-actions">
+            <button class="btn btn-primary" (click)="ajouterResultat()">
+                <i class="fas fa-plus"></i>
+                Ajouter un résultat
+            </button>
+            <button class="btn btn-secondary" (click)="refreshData()" [disabled]="loading">
+                <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+                Actualiser
+            </button>
+            <button class="btn btn-success" (click)="exportToCsv()" [disabled]="filteredResultats.length === 0">
+                <i class="fas fa-download"></i>
+                Exporter CSV
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtres et recherche -->
+    <div class="filters-section">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control" placeholder="Rechercher un participant..."
+                        [(ngModel)]="searchTerm" (input)="filterResultats()">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <select class="form-select" [(ngModel)]="selectedCompetition" (change)="filterResultats()">
+                    <option value="">Toutes les compétitions</option>
+                    <option *ngFor="let competition of competitions" [value]="competition">
+                        {{competition}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <div class="results-count">
+                    <span class="badge bg-info">
+                        {{filteredResultats.length}} résultat(s) affiché(s)
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message d'erreur -->
+    <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{error}}
+        <button type="button" class="btn-close" (click)="error = ''"></button>
+    </div>
+
+    <!-- Indicateur de chargement -->
+    <div *ngIf="loading" class="loading-container">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p class="loading-text">Chargement des résultats...</p>
+    </div>
+
+    <!-- Message si aucun résultat -->
+    <div *ngIf="!loading && filteredResultats.length === 0 && !error" class="no-results">
+        <div class="no-results-content">
+            <i class="fas fa-search fa-3x"></i>
+            <h4>Aucun résultat trouvé</h4>
+            <p *ngIf="searchTerm || selectedCompetition">
+                Aucun résultat ne correspond à vos critères de recherche.
+            </p>
+            <p *ngIf="!searchTerm && !selectedCompetition">
+                Aucun résultat n'a encore été enregistré.
+            </p>
+            <button class="btn btn-primary" (click)="ajouterResultat()">
+                <i class="fas fa-plus"></i>
+                Ajouter le premier résultat
+            </button>
+        </div>
+    </div>
+
+    <!-- Tableau des résultats -->
+    <div *ngIf="!loading && filteredResultats.length > 0" class="table-container">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-header">
+                    <tr>
+                        <th scope="col" class="sortable" (click)="onSort('place')">
+                            <span class="sort-header">
+                                Place
+                                <i class="fas" [ngClass]="getSortIcon('place')"></i>
+                            </span>
+                        </th>
+                        <th scope="col" class="sortable" (click)="onSort('participant')">
+                            <span class="sort-header">
+                                Participant
+                                <i class="fas" [ngClass]="getSortIcon('participant')"></i>
+                            </span>
+                        </th>
+                        <th scope="col" class="sortable" (click)="onSort('competition')">
+                            <span class="sort-header">
+                                Compétition
+                                <i class="fas" [ngClass]="getSortIcon('competition')"></i>
+                            </span>
+                        </th>
+                        <th scope="col" class="sortable" (click)="onSort('temps')">
+                            <span class="sort-header">
+                                Temps
+                                <i class="fas" [ngClass]="getSortIcon('temps')"></i>
+                            </span>
+                        </th>
+                        <th scope="col" class="sortable" (click)="onSort('points')">
+                            <span class="sort-header">
+                                Points
+                                <i class="fas" [ngClass]="getSortIcon('points')"></i>
+                            </span>
+                        </th>
+                        <th scope="col">Temps de passage</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let resultat of filteredResultats; trackBy: trackByResultat" class="table-row"
+                        [class.table-row-highlight]="resultat.place <= 3">
+
+                        <!-- Place avec médailles -->
+                        <td class="place-cell">
+                            <span class="place-badge" [ngClass]="getRankClass(resultat.place)">
+                                <i *ngIf="resultat.place === 1" class="fas fa-medal gold-medal"></i>
+                                <i *ngIf="resultat.place === 2" class="fas fa-medal silver-medal"></i>
+                                <i *ngIf="resultat.place === 3" class="fas fa-medal bronze-medal"></i>
+                                <span *ngIf="resultat.place > 3">{{resultat.place}}</span>
+                                <span *ngIf="resultat.place <= 3" class="place-number">{{resultat.place}}</span>
+                            </span>
+                        </td>
+
+                        <!-- Participant -->
+                        <td class="participant-cell">
+                            <div class="participant-info">
+                                <strong>{{resultat.utilisateurs.prenom}} {{resultat.utilisateurs.nom}}</strong>
+                                <small class="text-muted d-block" *ngIf="resultat.utilisateurs?.email">
+                                    {{resultat.utilisateurs.email}}
+                                </small>
+                            </div>
+                        </td>
+
+                        <!-- Compétition -->
+                        <td class="competition-cell">
+                            <span class="competition-name">{{resultat.competition.typeC}}</span>
+                            <small class="text-muted d-block" *ngIf="resultat.competition?.dateDebut">
+                                {{resultat.competition.dateDebut | date:'dd/MM/yyyy'}}
+                            </small>
+                        </td>
+
+                        <!-- Temps -->
+                        <td class="temps-cell">
+                            <span class="temps-value" [class.best-time]="resultat.place === 1">
+                                {{resultat.temps}}
+                            </span>
+                        </td>
+
+                        <!-- Points -->
+                        <td class="points-cell">
+                            <span class="points-badge">{{resultat.points}} pts</span>
+                        </td>
+
+                        <!-- Temps de passage -->
+                        <td class="passage-cell">
+                            <span class="passage-time">{{resultat.tempsDePassage}}</span>
+                        </td>
+
+                        <!-- Actions -->
+                        <td class="actions-cell text-center">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-sm btn-outline-primary"
+                                    (click)="modifierResultat(resultat.idResultat!)" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger"
+                                    (click)="supprimerResultat(resultat.idResultat!)" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistiques en bas -->
+    <div *ngIf="!loading && filteredResultats.length > 0" class="stats-footer">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h5>{{filteredResultats.length}}</h5>
+                        <p>Résultats totaux</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h5>{{competitions.length}}</h5>
+                        <p>Compétitions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="filteredResultats.length > 0">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h5>{{getBestTime()}}</h5>
+                        <p>Meilleur temps</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3" *ngIf="filteredResultats.length > 0">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h5>{{getMaxPoints()}}</h5>
+                        <p>Score maximum</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>

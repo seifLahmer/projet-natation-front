@@ -8,6 +8,7 @@ import { InscriptionService } from 'src/app/services/inscription/inscriptions.se
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/_services/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-competition',
   templateUrl: './competition.component.html',
@@ -38,7 +39,9 @@ export class CompetitionComponent implements OnInit, OnDestroy, AfterViewInit {
     private competitionService: CompetitionService,
     private router: Router,
     private inscriptionService: InscriptionService,
-    public authService: AuthService
+    public authService: AuthService,
+    private cdr: ChangeDetectorRef // Ajoutez ceci
+    
   ) {
     // Configuration du debounce pour la recherche
     this.searchSubject.pipe(
@@ -49,8 +52,18 @@ export class CompetitionComponent implements OnInit, OnDestroy, AfterViewInit {
       this.applyFilters();
     });
   }
+  public userRole: any = '';
 
   ngOnInit(): void {
+     // Vérifications de débogage
+  console.log('Token brut:', this.authService.getToken());
+  console.log('Token décodé:', this.authService.getDecodedToken());
+  console.log('Rôle depuis getUserRole():', this.authService.getUserRole());
+  this.cdr.detectChanges();
+  
+  this.userRole = this.authService.getUserRole();
+  console.log('userRole dans le composant:', this.userRole);
+  console.log('Type de userRole:', typeof this.userRole);// Tu dois voir ADMIN, JOUEUR ou autre ici
     this.loadCompetitions();
   }
 
@@ -260,17 +273,29 @@ export class CompetitionComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   inscrire(idCompetition: number): void {
+    // Vérifier que l'utilisateur est connecté
+    if (!this.authService.isAuthenticated()) {
+      alert("Vous devez être connecté pour vous inscrire.");
+      return;
+    }
+  
+    console.log('Inscription à la compétition:', idCompetition);
+    console.log('Utilisateur:', this.authService.getUserId());
+  
     this.inscriptionService.inscrireACompetition(idCompetition).subscribe({
       next: (message: string) => {
         alert("Inscription réussie: " + message);
+        // Optionnel : recharger les compétitions pour mettre à jour l'affichage
+        this.loadCompetitions();
       },
       error: (err) => {
-        console.error(err);
-        alert("Erreur lors de l'inscription.");
+        const errorMsg = err.error?.message || 'Erreur lors de l\'inscription.';
+        console.error('Erreur inscription:', err);
+        alert("Erreur : " + errorMsg);
       }
     });
   }
-
+  
   // Gestion des vues
   toggleView(): void {
     this.isCardView = !this.isCardView;

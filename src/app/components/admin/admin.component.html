@@ -1,7 +1,7 @@
 <div class="admin-container">
  <header> <!-- Header - Toujours visible -->
   <div class="admin-header">
-    <img src="assets/images/thumbnail_image (3).png" alt="Logo" class="admin-logo">
+    <img src="assets/images/thumbnail_image (1).png" alt="Logo" class="admin-logo">
     <h1>Tableau de bord Administrateur</h1>
     <button (click)="logout()" class="logout-btn">Déconnexion</button>
   </div>
@@ -36,8 +36,9 @@
           <li class="nav-item">
             <a class="nav-link text-white" routerLink="inscriptions/user" routerLinkActive="active">Inscriptions</a>
           </li>
+          
           <li class="nav-item">
-            <a class="nav-link text-white" routerLink="resultats/ajouter" routerLinkActive="active">Resultats ajout</a>
+            <a class="nav-link text-white" routerLink="resultats" routerLinkActive="active">Resultats</a>
           </li>
         </ul>
       </div>
@@ -127,14 +128,7 @@
       </div>
 
       <!-- Section Dernières activités -->
-      <div class="activity-section">
-        <h2>Dernières activités</h2>
-        <div class="activity-list">
-          <div *ngFor="let activity of lastActivities" class="activity-item">
-            <p><strong>{{ activity.action }}</strong></p>
-          </div>
-        </div>
-      </div>
+      
     </ng-container>
 
     <!-- Router outlet pour les composants enfants - affiché lorsqu'une route enfant est active -->

@@ -40,8 +40,10 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
 
     this.authService.login(email, password).subscribe({
-      next: () => {
+      next: (response) => {
         this.loading = false;
+        // Stocker le token dans le authService
+      this.authService.saveToken(response.token);
         // La redirection est gérée dans le AuthService
       },
       error: (err) => {

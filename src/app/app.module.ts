@@ -8,7 +8,8 @@ import { RouterModule } from '@angular/router';
 
 import { AppRoutingModule } from './app-routing.module';
 
-
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './auth.interceptor';
 import { AppComponent } from './app.component';
 import { PiscineComponent } from './components/PiscineC/piscine/piscine.component';
 import { AjouterPComponent } from './components/PiscineC/ajouter-p/ajouter-p.component';
@@ -29,6 +30,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { HasRoleDirective } from './directives/has-role.directive';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 @NgModule({
   declarations: [
@@ -51,8 +53,8 @@ import { HasRoleDirective } from './directives/has-role.directive';
     ForgotPasswordComponent,
     ResetPasswordComponent,
     AdminComponent,
-    HasRoleDirective
-    
+    HasRoleDirective,
+    UnauthorizedComponent
      // optionnel ici si déjà déclaré dans AdminModule
   ],
   imports: [
@@ -67,7 +69,13 @@ import { HasRoleDirective } from './directives/has-role.directive';
     
     
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -43,7 +43,7 @@ export class InscriptionComponent {
   constructor(private inscriptionService: InscriptionService) {}
 
   ngOnInit(): void {
-    this.inscriptionService.getInscriptions(this.userId, this.role).subscribe({
+    this.inscriptionService.getInscriptions().subscribe({
       next: (data) => {
         // Ajout dynamique de la propriété `nouveauStatut` uniquement pour les inscriptions en attente
         this.inscriptions = data.map(ins => ({

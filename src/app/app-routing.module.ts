@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+
 import { PiscineComponent } from './components/PiscineC/piscine/piscine.component';
 import { AjouterPComponent } from './components/PiscineC/ajouter-p/ajouter-p.component';
 import { CompetitionComponent } from './components/CompetitionC/competition/competition.component';
@@ -8,6 +9,7 @@ import { AjouterCComponent } from './components/CompetitionC/ajouter-c/ajouter-c
 import { CompetitionCardsComponent } from './components/CompetitionC/competition-cards/competition-cards.component';
 import { InscriptionComponent } from './components/inscription/inscription/inscription.component';
 import { AjoutResultatComponent } from './components/ResultatsC/ajouter-resultat/ajouter-resultat.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { LoginComponent } from './components/login/login.component';
 import { AdminComponent } from './components/admin/admin.component';
 import { ChefEquipeComponent } from './components/chef-equipe/chef-equipe.component';
@@ -16,50 +18,31 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ResultatsComponent } from './components/ResultatsC/resultats/resultats.component';
+import { roleGuardFn } from './services/role.guard';
 
 const routes: Routes = [
-  // Route par défaut - redirection vers dashboard
-  { 
-    path: '', 
-    redirectTo: '/dashboard', 
-    pathMatch: 'full' 
-  },
-  
-  // Routes principales
-  { 
-    path: 'login', 
-    component: LoginComponent 
-  },
-  { 
-    path: 'register', 
-    component: RegisterComponent
-  },
-  { 
-    path: 'dashboard', 
-    component: DashboardComponent
-  },
-  { 
-    path: 'forgot-password', 
-    component: ForgotPasswordComponent 
-  },
-  { 
-    path: 'reset-password', 
-    component: ResetPasswordComponent 
-  },
-  { 
-    path: 'chef-equipe', 
-    component: ChefEquipeComponent
-  },
-  
-  // Routes admin
-  { 
-    path: 'admin', 
+  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+
+  // Authentification
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+
+  { path: 'dashboard', component: DashboardComponent },
+
+  // Routes pour CHEF_EQUIPE
+  { path: 'chef-equipe', component: ChefEquipeComponent, canActivate: [roleGuardFn(['CHEF_EQUIPE'])] },
+
+  // Routes ADMIN sécurisées
+  {
+    path: 'admin',
     component: AdminComponent,
+    canActivate: [roleGuardFn(['ADMIN'])],
     children: [
-      // Route par défaut pour admin - affiche le composant parent
-       // Ceci est important
-      
-      // Routes enfants d'admin
+      // Route par défaut vide pour afficher le contenu principal d'admin
+    
       { path: 'piscines', component: PiscineComponent },
       { path: 'piscines/ajouter', component: AjouterPComponent },
       { path: 'piscines/modifier/:id', component: AjouterPComponent },
@@ -69,29 +52,25 @@ const routes: Routes = [
       { path: 'competitions/cartes', component: CompetitionCardsComponent },
       { path: 'inscriptions/user', component: InscriptionComponent },
       { path: 'resultats/ajouter', component: AjoutResultatComponent },
+      { path: 'resultats', component: ResultatsComponent },
     ]
   },
-  
-  // Routes joueur
-  { 
-    path: 'joueur', 
+
+  // Routes JOUEUR sécurisées
+  {
+    path: 'joueur',
     component: JoueurComponent,
+    canActivate: [roleGuardFn(['JOUEUR'])],
     children: [
-      // Route par défaut pour joueur
       { path: '', redirectTo: 'competitions', pathMatch: 'full' },
-      
-      // Routes enfants de joueur
       { path: 'competitions', component: CompetitionComponent },
-      
       { path: 'inscriptions/user', component: InscriptionComponent },
     ]
   },
-  
-  // Route 404 - doit être la dernière
-  { 
-    path: '**', 
-    redirectTo: '/dashboard'  // Correction de l'orthographe
-  }
+
+  // Route 404
+  { path: 'unauthorized', component: UnauthorizedComponent },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({

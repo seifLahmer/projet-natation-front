@@ -8,7 +8,7 @@ import { Centre } from 'src/app/models/centre';
 })
 export class CentreService {
   
-  private baseUrl = 'http://localhost:8082/api/centres'; // Ajustez le port selon votre configuration
+  private baseUrl = 'http://localhost:8082/api/admin/centres'; // Ajustez le port selon votre configuration
 
   constructor(private http: HttpClient) { }
 

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class RelevanceAiService {
   private apiUrl = 'https://openrouter.ai/api/v1/chat/completions';
-  private apiKey = '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'; // 🔒 Remplace par une variable d'environnement en production
+  private apiKey = 'sk-or-v1-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'; // 🔒 Remplace par une variable d'environnement en production
 
   constructor(private http: HttpClient) {}
 

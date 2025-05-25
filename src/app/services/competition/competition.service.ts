@@ -2,14 +2,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Competition } from '../../models/competition';
+import { User } from '../../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CompetitionService {
-  private apiUrl = 'http://localhost:8082/api/competitions'; // Ajustez le port si nécessaire
+  private apiUrl = 'http://localhost:8082/api/competitions';
 
   constructor(private http: HttpClient) { }
+
+  // Méthode principale : récupérer les utilisateurs inscrits à une compétition
+  getUsersByCompetitionId(competitionId: number): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/${competitionId}/users`);
+  }
+
+  // Méthode bonus : vérifier si un utilisateur est inscrit à une compétition
+  isUserRegistered(competitionId: number, userId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/${competitionId}/users/${userId}/inscription-status`);
+  }
 
   // Obtenir toutes les compétitions
   getAllCompetitions(): Observable<Competition[]> {
@@ -36,8 +47,4 @@ export class CompetitionService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  // Tester la connexion en récupérant une compétition spécifique
-  testConnection(id: number = 1): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${id}`);
-  }
 }
