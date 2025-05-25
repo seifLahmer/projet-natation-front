@@ -17,8 +17,10 @@ export class AdminComponent implements OnInit {
   showEditModal = false;
   selectedChef: any = null;
 
+  searchTerm: string = ''; // 🔍 Ajout pour la recherche
+
   constructor(
-    private http: HttpClient, 
+    private http: HttpClient,
     private router: Router,
     private datePipe: DatePipe
   ) {}
@@ -29,15 +31,23 @@ export class AdminComponent implements OnInit {
     this.loadLastActivities();
   }
 
+  // 🔍 Getter pour filtrer dynamiquement les chefs par nom
+  get filteredChefs(): any[] {
+    if (!this.searchTerm) return this.chefsEnAttente;
+    return this.chefsEnAttente.filter(chef =>
+      chef.nom.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
+  }
+
   loadChefsEnAttente(): void {
     this.http.get<any[]>('http://localhost:8082/api/admin/chefs-a-valider')
       .subscribe({
         next: (data) => {
           this.chefsEnAttente = data.map(chef => ({
             ...chef,
-            documentPath: chef.documentPath ? 
-                        `http://localhost:8082${chef.documentPath}` : 
-                        null
+            documentPath: chef.documentPath ?
+              `http://localhost:8082${chef.documentPath}` :
+              null
           }));
           this.loading = false;
         },
@@ -107,7 +117,7 @@ export class AdminComponent implements OnInit {
   }
 
   modifierChef(chef: any): void {
-    this.selectedChef = {...chef};
+    this.selectedChef = { ...chef };
     this.showEditModal = true;
   }
 

@@ -50,9 +50,14 @@
         <span *ngIf="!loading">Se connecter</span>
         <span *ngIf="loading" class="spinner"></span>
       </button>
-       <div class="forgot-password-link">
-          <a routerLink="/forgot-password">Forget password ?</a>
-        </div>
+       <div class="auth-links">
+  <div class="register-link">
+    <a routerLink="/register">Créer un compte</a>
+  </div>
+  <div class="forgot-password-link">
+    <a routerLink="/forgot-password">Mot de passe oublié ?</a>
+  </div>
+</div>
     </form>
 
     <div class="auth-footer">

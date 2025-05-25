@@ -110,8 +110,34 @@
   gap: 10px;
 }
 
-/* Styles spécifiques pour le formulaire d'édition */
+
 .edit-modal .form-group {
+  max-height: 10vh;
+
+}
+
+.edit-modal .form-group label {
+  font-weight: 600;
+  color: #2c3e50;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.edit-modal .form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.edit-modal .form-group input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+.edit-modal .form-group textarea {
   margin-bottom: 15px;
 }
 

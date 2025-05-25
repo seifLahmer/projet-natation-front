@@ -129,7 +129,9 @@ h2 .badge {
   font-size: 1rem;
   padding: 5px;
 }
-
+tr.mon-club {
+  background-color: #f0f8ff;
+}
 .add-btn {
   padding: 12px 25px;
   background: linear-gradient(135deg, #0066cc 0%, #0099ff 100%);

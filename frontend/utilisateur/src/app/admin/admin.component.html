@@ -1,3 +1,4 @@
+<!-- admin.component.html -->
 <div class="admin-container">
   <div class="admin-header">
     <img src="assets/images/logo-federation.png" alt="Logo" class="admin-logo">
@@ -18,21 +19,27 @@
       </div>
       <div class="stat-card">
         <h3>En attente</h3>
-        <p>{{ chefsEnAttente.length || 0 }}</p>
+        <p>{{ filteredChefs.length || 0 }}</p>
       </div>
     </div>
 
     <!-- Section Validation des chefs -->
     <div class="validation-section">
       <h2>Validation des chefs de club</h2>
-      
+<div class="search-wrapper">
+  <input [(ngModel)]="searchTerm" placeholder="Rechercher par nom..." type="text" class="search-input" />
+  <i class="fas fa-search search-icon"></i>
+</div>
+
+
+
+
       <div *ngIf="loading" class="loading">Chargement en cours...</div>
-      
-      <div *ngIf="!loading && chefsEnAttente.length === 0" class="no-data">
-        Aucun chef de club en attente de validation
+      <div *ngIf="!loading && filteredChefs.length === 0" class="no-data">
+        Aucun chef de club trouvé
       </div>
-    
-      <table *ngIf="!loading && chefsEnAttente.length > 0" class="chefs-table">
+
+      <table *ngIf="!loading && filteredChefs.length > 0" class="chefs-table">
         <thead>
           <tr>
             <th>Nom</th>
@@ -48,7 +55,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let chef of chefsEnAttente">
+          <tr *ngFor="let chef of filteredChefs">
             <td>{{ chef.nom }}</td>
             <td>{{ chef.prenom }}</td>
             <td>{{ chef.email }}</td>
@@ -90,7 +97,7 @@
       <h2>Dernières activités</h2>
       <div class="activity-list">
         <div *ngFor="let activity of lastActivities" class="activity-item">
-          <p><strong>{{ activity.action }}</strong> </p>
+          <p><strong>{{ activity.action }}</strong></p>
         </div>
       </div>
     </div>
@@ -100,37 +107,37 @@
   <div *ngIf="showEditModal" class="modal-overlay">
     <div class="modal-content">
       <h2>Modifier le chef de club</h2>
-      
+
       <div class="form-group">
         <label>Nom:</label>
-        <input [(ngModel)]="selectedChef.nom" type="text">
+        <input [(ngModel)]="selectedChef.nom" type="text" />
       </div>
-      
+
       <div class="form-group">
         <label>Prénom:</label>
-        <input [(ngModel)]="selectedChef.prenom" type="text">
+        <input [(ngModel)]="selectedChef.prenom" type="text" />
       </div>
-      
+
       <div class="form-group">
         <label>Email:</label>
-        <input [(ngModel)]="selectedChef.email" type="email">
+        <input [(ngModel)]="selectedChef.email" type="email" />
       </div>
-      
+
       <div class="form-group">
         <label>Téléphone:</label>
-        <input [(ngModel)]="selectedChef.telephone" type="tel">
+        <input [(ngModel)]="selectedChef.telephone" type="tel" />
       </div>
-      
+
       <div class="form-group">
         <label>Nom du Club:</label>
-        <input [(ngModel)]="selectedChef.nomClub" type="text">
+        <input [(ngModel)]="selectedChef.nomClub" type="text" />
       </div>
-      
+
       <div class="form-group">
         <label>Adresse du Club:</label>
-        <input [(ngModel)]="selectedChef.adresseClub" type="text">
+        <input [(ngModel)]="selectedChef.adresseClub" type="text" />
       </div>
-      
+
       <div class="modal-actions">
         <button (click)="showEditModal = false" class="btn-cancel">Annuler</button>
         <button (click)="saveModifications()" class="btn-save">Enregistrer</button>

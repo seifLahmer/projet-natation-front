@@ -17,12 +17,10 @@ export class ChefEquipeComponent implements OnInit {
   joueurForm: FormGroup;
   currentUser: any;
   
-  // Variables pour l'édition
   showEditModal = false;
   editForm: FormGroup;
   selectedJoueur: any;
   
-  // Variables pour la suppression
   showDeleteModal = false;
   joueurToDelete: any;
 
@@ -51,11 +49,6 @@ export class ChefEquipeComponent implements OnInit {
     this.loadJoueurs();
     this.loadCurrentUserDetails();
   }
-  viewDetails(joueur: any): void {
-
-  console.log('Détails du joueur :', joueur);
-}
-
 
   loadCurrentUserDetails(): void {
     this.http.get<any>(`http://localhost:8082/api/auth/user-details?email=${this.currentUser.email}`)
@@ -69,11 +62,21 @@ export class ChefEquipeComponent implements OnInit {
 
   loadJoueurs(): void {
     this.http.get<any[]>('http://localhost:8082/api/joueurs/sans-club').subscribe({
-      next: (joueurs) => {
-        this.joueurs = joueurs;
-        this.filteredJoueurs = [...joueurs];
+      next: (joueursSansClub) => {
+        this.http.get<any[]>(`http://localhost:8082/api/joueurs/par-club?nomClub=${this.currentUser.nomClub}`).subscribe({
+          next: (joueursClub) => {
+            const allJoueurs = [...joueursSansClub, ...joueursClub];
+            const uniqueJoueurs = allJoueurs.filter((joueur, index, self) =>
+              index === self.findIndex(j => j.id === joueur.id)
+            );
+            
+            this.joueurs = uniqueJoueurs;
+            this.filteredJoueurs = [...uniqueJoueurs];
+          },
+          error: (err) => console.error('Erreur lors du chargement des joueurs du club', err)
+        });
       },
-      error: (err) => console.error('Erreur lors du chargement des joueurs', err)
+      error: (err) => console.error('Erreur lors du chargement des joueurs sans club', err)
     });
   }
 
@@ -94,7 +97,7 @@ export class ChefEquipeComponent implements OnInit {
     if (this.joueurForm.valid) {
       const joueurData = {
         ...this.joueurForm.value,
-        nomClub: this.currentUser.nomClub
+        chefEmail: this.currentUser.email // Ajout de l'email du chef d'équipe
       };
 
       const endpoint = this.addMode === 'email' 

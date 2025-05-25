@@ -88,7 +88,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let joueur of filteredJoueurs">
+         <tr *ngFor="let joueur of filteredJoueurs" [class.mon-club]="joueur.nomClub === currentUser.nomClub">
             <td>{{ joueur.nom }}</td>
             <td>{{ joueur.prenom }}</td>
             <td>{{ joueur.email }}</td>
@@ -100,9 +100,6 @@
               </button>
               <button (click)="confirmDelete(joueur)" class="delete-btn" title="Supprimer">
                 <i class="fas fa-trash-alt"></i> 
-              </button>
-              <button (click)="viewDetails(joueur)" class="view-btn" title="Détails">
-                <i class="fas fa-eye"></i> 
               </button>
             </td>
           </tr>
@@ -166,9 +163,6 @@
         <i class="fas fa-users-slash"></i>
         <h3>Aucun joueur trouvé</h3>
         <p>Essayez de modifier vos critères de recherche ou ajoutez un nouveau joueur.</p>
-        <button (click)="showAddForm = true; addMode = 'details'" class="add-btn">
-          <i class="fas fa-user-plus"></i> Ajouter un joueur
-        </button>
       </div>
     </div>
   </div>

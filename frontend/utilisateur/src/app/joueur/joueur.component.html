@@ -56,6 +56,12 @@
         <span class="label"><i class="fas fa-tshirt"></i> Club:</span>
         <span class="value">{{userDetails.nomClub || 'Non renseigné'}}</span>
       </div>
+<div class="info-row">
+  <span class="label"><i class="fas fa-map-marker-alt"></i> Adresse du club:</span>
+  <span class="value">{{userDetails.adresseClub || 'Non renseignée'}}</span>
+</div>
+
+
       <div class="info-row">
         <span class="label"><i class="fas fa-calendar-alt"></i> Date d'inscription:</span>
         <span class="value">{{userDetails.dateCreation | date:'dd/MM/yyyy'}}</span>
@@ -113,22 +119,28 @@
         </div>
       </div>
 
-      <div class="form-group">
+     <div class="form-group">
         <label for="nomClub"><i class="fas fa-tshirt"></i> Club</label>
         <div class="input-with-icon">
           <i class="fas fa-lock input-icon"></i>
-          <input type="text" id="nomClub" formControlName="nomClub" class="form-control" readonly>
+          <input type="text" id="nomClub" [value]="userDetails.nomClub" class="form-control" readonly>
         </div>
       </div>
+     <div class="form-group">
+  <label for="adresseClub"><i class="fas fa-map-marker-alt"></i> Adresse du club</label>
+  <div class="input-with-icon">
+    <i class="fas fa-map-marker-alt input-icon"></i>
+    <input type="text" id="adresseClub" [value]="userDetails.adresseClub" class="form-control" readonly>
+  </div>
+</div>
 
-      <div class="form-group">
+    <div class="form-group">
         <label for="dateCreation"><i class="fas fa-calendar-alt"></i> Date d'inscription</label>
         <div class="input-with-icon">
           <i class="fas fa-lock input-icon"></i>
           <input type="text" id="dateCreation" [value]="userDetails.dateCreation | date:'dd/MM/yyyy'" class="form-control" readonly>
         </div>
       </div>
-
       <div class="modal-actions">
         <button type="button" class="cancel-btn" (click)="showEditModal = false">
           <i class="fas fa-times"></i> Annuler
