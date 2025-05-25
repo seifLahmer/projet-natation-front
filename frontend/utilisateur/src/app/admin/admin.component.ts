@@ -127,6 +127,8 @@ export class AdminComponent implements OnInit {
         next: () => {
           alert('Chef modifié avec succès');
           this.loadChefsEnAttente();
+          this.loadStats();
+          this.loadLastActivities();
           this.showEditModal = false;
         },
         error: (err) => {
