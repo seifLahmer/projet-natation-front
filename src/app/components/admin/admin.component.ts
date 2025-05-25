@@ -53,6 +53,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.loadChefsEnAttente();
       this.loadStats();
     }
+    this.loadLastActivities();
   }
 
   loadChefsEnAttente(): void {
@@ -157,5 +158,16 @@ export class AdminComponent implements OnInit, OnDestroy {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }
+  }
+  loadLastActivities(): void {
+    this.http.get<any[]>('http://localhost:8082/api/admin/activities')
+      .subscribe({
+        next: (data) => {
+          this.lastActivities = data;
+        },
+        error: (err) => {
+          console.error('Erreur:', err);
+        }
+      });
   }
 }

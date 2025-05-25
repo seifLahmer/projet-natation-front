@@ -138,7 +138,17 @@
     <!-- Router outlet pour les composants enfants - affiché lorsqu'une route enfant est active -->
     <router-outlet></router-outlet>
   </div>
-
+  <!-- Section Dernières activités -->
+  <div class="activity-section">
+    <h2>Dernières activités</h2>
+    <div class="activity-list">
+      <div *ngFor="let activity of lastActivities" class="activity-item">
+      
+        <p><strong>{{ activity.action }}</strong></p>
+      </div>
+    </div>
+  </div>
+  
   <!-- Modal de modification - toujours disponible -->
   <div *ngIf="showEditModal" class="modal-overlay">
     <div class="modal-content">
