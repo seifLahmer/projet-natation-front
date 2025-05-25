@@ -18,6 +18,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   showEditModal = false;
   selectedChef: any = null;
   isChildRouteActive = false;
+  searchTerm: string = '';
   stats: any = {
     chefsValides: 0,
     clubsEnregistres: 0

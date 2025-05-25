@@ -43,7 +43,7 @@
   padding: 20px;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   text-align: center;
   transition: transform 0.3s;
 }
@@ -69,7 +69,7 @@
   background: white;
   padding: 25px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   margin-bottom: 30px;
 }
 
@@ -77,7 +77,7 @@
   background: white;
   padding: 25px;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .activity-item {
@@ -92,7 +92,8 @@
   font-size: 14px;
 }
 
-.chefs-table th, .chefs-table td {
+.chefs-table th,
+.chefs-table td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #eee;
@@ -208,7 +209,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -221,7 +222,7 @@
   border-radius: 8px;
   width: 500px;
   max-width: 90%;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal-content h2 {
@@ -289,4 +290,117 @@
 
 .btn-save:hover {
   background: #0069d9;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 250px;
+  padding: 8px 36px 8px 12px;
+  /* Padding droit augmenté pour faire de la place à l’icône */
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 14px;
+  transition: box-shadow 0.3s, border-color 0.3s;
+  border-color: #007bff;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #007bff;
+  pointer-events: none;
+  /* L’icône ne gêne pas la saisie */
+  font-size: 16px;
+}
+/* En-tête de l'admin */
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  background-color: #f8f9fa;
+  /* gris très clair */
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.admin-header h1 {
+  flex-grow: 1;
+  text-align: center;
+  font-size: 1.8rem;
+  color: #333;
+  margin: 0;
+}
+
+.admin-logo {
+  height: 50px;
+  width: auto;
+}
+
+/* Bouton de déconnexion */
+.logout-btn {
+  background-color: #6c757d;
+  /* gris foncé */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #5a6268;
+}
+
+/* Navbar */
+.navbar {
+  padding: 10px 30px;
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.navbar-brand {
+  font-size: 1.4rem;
+  color: #343a40 !important;
+  font-weight: bold;
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+.navbar-nav .nav-link {
+  color: #495057 !important;
+  font-weight: 500;
+  margin-right: 15px;
+  transition: all 0.3s;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link:hover {
+  color: #007bff !important;
+  /* bleu pour survol ou actif */
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 6px 10px;
 }

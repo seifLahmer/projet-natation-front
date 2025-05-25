@@ -243,7 +243,7 @@
                             </div>
 
                             <!-- Gestion du statut pour inscriptions en attente -->
-                            <div *ngIf="inscription.statut === StatutInscription.EN_ATTENTE" class="mb-3">
+                            <div *ngIf="inscription.statut === StatutInscription.EN_ATTENTE && userRole === 'ADMIN'" class="mb-3">
                                 <label class="form-label text-muted small">Changer le statut</label>
                                 <div class="d-flex gap-2">
                                     <select class="form-select form-select-sm" [(ngModel)]="inscription.nouveauStatut">

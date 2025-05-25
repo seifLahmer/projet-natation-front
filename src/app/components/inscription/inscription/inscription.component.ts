@@ -3,6 +3,7 @@ import { Inscription } from 'src/app/models/inscription';
 import { InscriptionService } from 'src/app/services/inscription/inscriptions.service';
 import { StatutInscription } from 'src/app/models/inscription';
 import { Competition } from 'src/app/models/competition';
+import { AuthService } from 'src/app/services/_services/auth.service';
 declare var bootstrap: any;
 
 @Component({
@@ -40,9 +41,10 @@ export class InscriptionComponent {
   
   selectedCompetition: Competition | null = null;
   
-  constructor(private inscriptionService: InscriptionService) {}
-
+  constructor(private inscriptionService: InscriptionService,private authService :AuthService) {}
+  public userRole: any = '';
   ngOnInit(): void {
+    this.userRole = this.authService.getUserRole();
     this.inscriptionService.getInscriptions().subscribe({
       next: (data) => {
         // Ajout dynamique de la propriété `nouveauStatut` uniquement pour les inscriptions en attente

@@ -143,21 +143,31 @@
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 2px 5px rgba(49, 102, 236, 0.2);
+  margin-top: 1rem;
+  /* Ajout pour espacement */
 }
 
-.forgot-password-link {
-  text-align: right;
-  margin-top: 8px;
+/* Liens en bas du formulaire */
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0, 9rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
 }
 
+.register-link a,
 .forgot-password-link a {
-  color: #3498db;
+  color: rgb(57, 69, 207);
   text-decoration: none;
-  font-size: 0.9em;
+  font-size: 0.9rem;
+  transition: color 0.2s;
 }
 
+.register-link a:hover,
 .forgot-password-link a:hover {
   text-decoration: underline;
+  color: var(--primary-dark);
 }
 
 .auth-btn:disabled {
@@ -172,12 +182,14 @@
   height: 20px;
   border: 3px solid rgba(0, 0, 0, 0.3);
   border-radius: 50%;
-  border-top-color: rgb(255, 255, 255);
+  border-top-color: rgb(146, 49, 49);
   animation: spin 1s ease-in-out infinite;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Footer */

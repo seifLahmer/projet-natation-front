@@ -155,4 +155,18 @@ export class AuthService {
   getDecodedToken(): JwtPayload | null {
     return this.decodedToken;
   }
+  getUserDetails(email: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user-details?email=${email}`);
+  }
+  updateProfile(userData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update-profile`, userData).pipe(
+      catchError(error => {
+        let errorMsg = 'Erreur lors de la mise à jour du profil';
+        if (error.error?.error) {
+          errorMsg = error.error.error;
+        }
+        return throwError(() => errorMsg);
+      })
+    );
+  }
 }

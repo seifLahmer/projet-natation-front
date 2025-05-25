@@ -3,13 +3,15 @@
   <div class="admin-header">
     <img src="assets/images/thumbnail_image (1).png" alt="Logo" class="admin-logo">
     <h1>Tableau de bord Administrateur</h1>
-    <button (click)="logout()" class="logout-btn">Déconnexion</button>
+    <button (click)="logout()" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
   </div>
 
   <!-- Navigation - Toujours visible -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-white" href="#"> NatationClub</a>
+      
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -67,7 +69,9 @@
       <!-- Section Validation des chefs -->
       <div class="validation-section">
         <h2>Validation des chefs de club</h2>
-
+        <div class="search-wrapper">
+          <input [(ngModel)]="searchTerm" placeholder="Rechercher par nom..." type="text" class="search-input" />
+          <i class="fas fa-search search-icon"></i>  </div>
         <div *ngIf="loading" class="loading">Chargement en cours...</div>
 
         <div *ngIf="!loading && chefsEnAttente.length === 0" class="no-data">

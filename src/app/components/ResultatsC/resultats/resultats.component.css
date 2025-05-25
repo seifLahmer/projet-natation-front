@@ -385,3 +385,23 @@
 .btn-outline-primary:hover {
     background-color: #007bff;
     border-color: #007bff; }
+
+        .participant-cell {
+            min-width: 200px;
+        }
+    
+        .participant-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+    
+        .participant-name {
+            font-weight: 600;
+            color: #333;
+        }
+    
+        .participant-email {
+            font-size: 0.85rem;
+            color: #666;
+            word-break: break-word;   }
