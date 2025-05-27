@@ -1,11 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/_services/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-joueur',
   templateUrl: './joueur.component.html',
-  styleUrls: ['./joueur.component.css']
+  styleUrls: ['./joueur.component.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule
+  ]
 })
 export class JoueurComponent implements OnInit {
   showProfileModal = false;

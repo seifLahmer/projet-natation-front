@@ -1,0 +1,74 @@
+<div class="licence-card">
+  <div class="licence-header">
+    <h2>LICENCE DE NATATION</h2>
+    <div class="licence-id">N°: {{data.licence.numLicence}}</div>
+    <div class="action-buttons" *ngIf="isChefEquipe">
+      <button mat-icon-button class="edit-btn" (click)="onEdit()" matTooltip="Modifier la licence">
+        <i class="fas fa-edit"></i>
+      </button>
+      <button mat-icon-button class="delete-btn" (click)="onDelete()" matTooltip="Supprimer la licence">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="licence-content">
+    <div class="photo-section">
+      <img src="assets/images/swimmer-icon.svg" alt="Icône nageur" class="swimmer-photo">
+    </div>
+
+    <div class="info-section">
+      <div class="info-row">
+        <div class="info-group">
+          <label>NOM</label>
+          <div class="info-value">{{data.licence.nomJoueur | uppercase}}</div>
+        </div>
+
+        <div class="info-group">
+          <label>PRÉNOM</label>
+          <div class="info-value">{{data.licence.prenomJoueur}}</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-group">
+          <label>CATÉGORIE</label>
+          <div class="info-value">{{data.licence.categorie}}</div>
+        </div>
+
+        <div class="info-group">
+          <label>NIVEAU</label>
+          <div class="info-value">{{data.licence.niveau}}</div>
+        </div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-group">
+          <label>DATE D'ÉMISSION</label>
+          <div class="info-value">{{data.licence.dateCreation | date:'dd/MM/yyyy'}}</div>
+        </div>
+
+        <div class="info-group">
+          <label>DATE D'EXPIRATION</label>
+          <div class="info-value">{{data.licence.dateExpiration | date:'dd/MM/yyyy'}}</div>
+        </div>
+      </div>
+
+      <div class="info-group club-info">
+        <label>CLUB</label>
+        <div class="info-value">{{data.licence.club}}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="licence-footer">
+    <div class="barcode">
+      <div class="barcode-lines"></div>
+      <div class="barcode-number">{{data.licence.numLicence}}</div>
+    </div>
+  </div>
+</div>
+
+<div class="dialog-actions">
+  <button mat-button (click)="onClose()">Fermer</button>
+</div> 

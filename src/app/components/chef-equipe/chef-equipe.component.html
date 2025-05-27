@@ -82,6 +82,7 @@
             <th><i class="fas fa-at"></i> Email</th>
             <th><i class="fas fa-phone"></i> Téléphone</th>
             <th><i class="fas fa-calendar-alt"></i> Date d'inscription</th>
+            <th><i class="fas fa-id-card"></i> Licence</th>
             <th class="actions-header"><i class="fas fa-cog"></i> Actions</th>
           </tr>
         </thead>
@@ -92,12 +93,25 @@
             <td>{{ joueur.email }}</td>
             <td>{{ joueur.telephone || 'N/A' }}</td>
             <td>{{ joueur.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>
+              <div class="licence-status" [title]="joueur.hasLicence ? 'Licence valide jusqu\'au ' + (joueur.licenceInfo?.dateExpiration | date:'dd/MM/yyyy') : 'Pas de licence'" (click)="viewLicence(joueur)" [class.clickable]="joueur.hasLicence">
+                <i *ngIf="joueur.hasLicence" class="fas fa-check-circle licence-icon valid"></i>
+                <i *ngIf="!joueur.hasLicence" class="fas fa-times-circle licence-icon invalid"></i>
+                <span *ngIf="joueur.hasLicence" class="licence-number">
+                  {{ joueur.licenceInfo?.numLicence }}
+                </span>
+              </div>
+            </td>
             <td class="actions">
               <button (click)="editJoueur(joueur)" class="edit-btn" title="Modifier">
                 <i class="fas fa-edit"></i>
               </button>
               <button (click)="confirmDelete(joueur)" class="delete-btn" title="Supprimer">
                 <i class="fas fa-trash-alt"></i>
+              </button>
+              <button (click)="createLicence(joueur)" class="licence-btn" title="Créer une licence"
+                      [disabled]="joueur.hasLicence">
+                <i class="fas fa-id-card"></i>
               </button>
             </td>
           </tr>
