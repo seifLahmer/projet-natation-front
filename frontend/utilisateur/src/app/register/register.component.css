@@ -5,100 +5,103 @@
     min-height: 100vh;
     background-color: #f5f7fa;
     padding: 20px;
-  }
+}
   
-  .register-card {
+.register-card {
     background: white;
     border-radius: 8px;
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 500px;
     padding: 30px;
-  }
+    margin-top: 20px; /* Espace pour l'alerte */
+}
   
-  .register-header {
+.register-header {
     text-align: center;
     margin-bottom: 25px;
-  }
+}
   
-  .register-header h2 {
+.register-header h2 {
     color: #0066cc;
     margin: 10px 0 5px;
-  }
+}
   
-  .register-header p {
+.register-header p {
     color: #0066cc;
     margin: 0;
-  }
+}
   
-  .register-form {
+.register-form {
     display: flex;
     flex-direction: column;
     gap: 15px;
-  }
+}
   
-  .form-group {
+.form-group {
     position: relative;
-  }
+}
   
-  .form-group label {
+.form-group label {
     display: block;
     margin-bottom: 8px;
     font-weight: 800;
-  }
+}
   
-  .form-group input, 
-  .form-group select {
+.form-group input, 
+.form-group select {
     width: 90%;
     padding: 12px 15px 12px 40px;
     border: 1px solid #ddd;
     border-radius: 6px;
     font-size: 1rem;
-  }
+}
   
-  .form-group i {
+.form-group i {
     position: absolute;
     left: 15px;
     top: 40px;
     color: #777;
-  }
+}
   
-  .password-group input {
+.password-group input {
     padding-right: 18px;
-  }
+}
   
-  .toggle-password {
+.toggle-password {
     position: absolute;
     right: 20px;
     top: 40px;
     cursor: pointer;
     color: #777;
-  }
-  .info-text {
+}
+
+.info-text {
     color: #ff6b00;
     font-size: 0.9rem;
     margin-top: 5px;
-  }
+}
   
-  .register-footer {
+.register-footer {
     margin-top: 20px;
     font-size: 0.9rem;
-  }
+}
   
-  .register-footer ul {
+.register-footer ul {
     padding-left: 20px;
     margin: 10px 0;
-  }
+}
   
-  /* Style pour le champ fichier */
-  input[type="file"] {
+/* Style pour le champ fichier */
+input[type="file"] {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
     margin-top: 5px;
-  }
-  .submit-btn {
+}
+
+.submit-btn {
     width: 100%;
     padding: 14px;
     background: #0066cc;
@@ -109,29 +112,29 @@
     font-weight: 600;
     cursor: pointer;
     margin-top: 10px;
-  }
+}
   
-  .submit-btn:disabled {
+.submit-btn:disabled {
     background: #cccccc;
     cursor: not-allowed;
-  }
+}
   
-  .login-link {
+.login-link {
     text-align: center;
     margin-top: 15px;
     color: #666;
-  }
+}
   
-  .login-link a {
+.login-link a {
     color: #0066cc;
     text-decoration: none;
-  }
+}
   
-  .login-link a:hover {
+.login-link a:hover {
     text-decoration: underline;
-  }
+}
   
-  .spinner {
+.spinner {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -139,8 +142,76 @@
     border-radius: 50%;
     border-top-color: white;
     animation: spin 1s ease-in-out infinite;
-  }
+}
   
-  @keyframes spin {
+@keyframes spin {
     to { transform: rotate(360deg); }
-  }
+}
+
+/* Styles pour les alertes */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-success {
+    background-color: #4CAF50;
+}
+
+.alert-error {
+    background-color: #F44336;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 15px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Styles pour les messages d'erreur */
+.error-message {
+    margin-top: 5px;
+}
+
+.error-text {
+    color: #F44336; /* Rouge pour les messages d'erreur */
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.required-field {
+    color: #F44336;
+}

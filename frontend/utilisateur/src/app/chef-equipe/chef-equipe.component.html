@@ -32,9 +32,10 @@
         <div *ngIf="addMode === 'email'" class="form-group">
           <label><i class="fas fa-at"></i> Email:</label>
           <input type="email" formControlName="email" required placeholder="email@exemple.com">
-          <div *ngIf="joueurForm.get('email')?.invalid && joueurForm.get('email')?.touched" 
-               class="error-message">
-            <i class="fas fa-exclamation-circle"></i> Email invalide
+          <div *ngIf="email?.invalid && email?.touched" class="error-message">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="email?.errors?.['required']">L'email est requis</span>
+            <span *ngIf="email?.errors?.['email']">Email invalide</span>
           </div>
         </div>
 
@@ -42,25 +43,40 @@
           <div class="form-group">
             <label><i class="fas fa-user-tag"></i> Nom:</label>
             <input type="text" formControlName="nom" required placeholder="Nom du joueur">
+            <div *ngIf="nom?.invalid && nom?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="nom?.errors?.['required']">Le nom est requis</span>
+              <span *ngIf="nom?.errors?.['pattern']">Caractères non autorisés</span>
+            </div>
           </div>
           
           <div class="form-group">
             <label><i class="fas fa-user"></i> Prénom:</label>
             <input type="text" formControlName="prenom" required placeholder="Prénom du joueur">
+            <div *ngIf="prenom?.invalid && prenom?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="prenom?.errors?.['required']">Le prénom est requis</span>
+              <span *ngIf="prenom?.errors?.['pattern']">Caractères non autorisés</span>
+            </div>
           </div>
           
           <div class="form-group">
             <label><i class="fas fa-at"></i> Email:</label>
             <input type="email" formControlName="email" required placeholder="email@exemple.com">
-            <div *ngIf="joueurForm.get('email')?.invalid && joueurForm.get('email')?.touched" 
-                 class="error-message">
-              <i class="fas fa-exclamation-circle"></i> Email invalide
+            <div *ngIf="email?.invalid && email?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="email?.errors?.['required']">L'email est requis</span>
+              <span *ngIf="email?.errors?.['email']">Email invalide</span>
             </div>
           </div>
           
           <div class="form-group">
             <label><i class="fas fa-phone"></i> Téléphone:</label>
             <input type="tel" formControlName="telephone" placeholder="06 12 34 56 78">
+            <div *ngIf="telephone?.invalid && telephone?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="telephone?.errors?.['pattern']">Seuls les chiffres sont autorisés</span>
+            </div>
           </div>
         </div>
 
@@ -75,8 +91,8 @@
       </form>
     </div>
 
-    <div class="table-responsive" *ngIf="filteredJoueurs.length > 0">
-      <table>
+    <div class="table-responsive">
+      <table *ngIf="filteredJoueurs.length > 0; else noDataTemplate">
         <thead>
           <tr>
             <th><i class="fas fa-user-tag"></i> Nom</th>
@@ -88,9 +104,9 @@
           </tr>
         </thead>
         <tbody>
-         <tr *ngFor="let joueur of filteredJoueurs" [class.mon-club]="joueur.nomClub === currentUser.nomClub">
-            <td>{{ joueur.nom }}</td>
-            <td>{{ joueur.prenom }}</td>
+          <tr *ngFor="let joueur of filteredJoueurs">
+            <td>{{ joueur.nom || 'N/A' }}</td>
+            <td>{{ joueur.prenom || 'N/A' }}</td>
             <td>{{ joueur.email }}</td>
             <td>{{ joueur.telephone || 'N/A' }}</td>
             <td>{{ joueur.dateCreation | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -105,6 +121,17 @@
           </tr>
         </tbody>
       </table>
+
+      <ng-template #noDataTemplate>
+        <div class="no-data">
+          <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <h3>Aucun joueur trouvé</h3>
+            <p *ngIf="searchTerm">Aucun joueur ne correspond à votre recherche. Essayez d'autres termes.</p>
+            <p *ngIf="!searchTerm">Aucun joueur n'est actuellement enregistré dans votre équipe.</p>
+          </div>
+        </div>
+      </ng-template>
     </div>
 
     <!-- Modal d'édition -->
@@ -116,18 +143,37 @@
           <div class="form-group">
             <label><i class="fas fa-user-tag"></i> Nom:</label>
             <input type="text" formControlName="nom" required>
+            <div *ngIf="editForm.get('nom')?.invalid && editForm.get('nom')?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i> 
+              <span *ngIf="editForm.get('nom')?.errors?.['required']">Le nom est requis</span>
+              <span *ngIf="editForm.get('nom')?.errors?.['pattern']">Caractères non autorisés</span>
+            </div>
           </div>
           <div class="form-group">
             <label><i class="fas fa-user"></i> Prénom:</label>
             <input type="text" formControlName="prenom" required>
+            <div *ngIf="editForm.get('prenom')?.invalid && editForm.get('prenom')?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i> 
+              <span *ngIf="editForm.get('prenom')?.errors?.['required']">Le prénom est requis</span>
+              <span *ngIf="editForm.get('prenom')?.errors?.['pattern']">Caractères non autorisés</span>
+            </div>
           </div>
           <div class="form-group">
             <label><i class="fas fa-at"></i> Email:</label>
             <input type="email" formControlName="email" required>
+            <div *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i> 
+              <span *ngIf="editForm.get('email')?.errors?.['required']">L'email est requis</span>
+              <span *ngIf="editForm.get('email')?.errors?.['email']">Email invalide</span>
+            </div>
           </div>
           <div class="form-group">
             <label><i class="fas fa-phone"></i> Téléphone:</label>
             <input type="tel" formControlName="telephone">
+            <div *ngIf="editForm.get('telephone')?.invalid && editForm.get('telephone')?.touched" class="error-message">
+              <i class="fas fa-exclamation-circle"></i> 
+              <span *ngIf="editForm.get('telephone')?.errors?.['pattern']">Seuls les chiffres sont autorisés</span>
+            </div>
           </div>
           <div class="form-actions">
             <button type="submit" [disabled]="!editForm.valid" class="submit-btn">
@@ -155,14 +201,6 @@
             <i class="fas fa-times"></i> Annuler
           </button>
         </div>
-      </div>
-    </div>
-
-    <div *ngIf="filteredJoueurs.length === 0" class="no-data">
-      <div class="empty-state">
-        <i class="fas fa-users-slash"></i>
-        <h3>Aucun joueur trouvé</h3>
-        <p>Essayez de modifier vos critères de recherche ou ajoutez un nouveau joueur.</p>
       </div>
     </div>
   </div>

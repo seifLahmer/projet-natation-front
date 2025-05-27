@@ -31,23 +31,29 @@ export class ChefEquipeComponent implements OnInit {
   ) {
     this.joueurForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
-      telephone: ['']
+      nom: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ '-]*$/)]],
+      prenom: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ '-]*$/)]],
+      telephone: ['', [Validators.pattern(/^[0-9]*$/)]]
     });
     
     this.editForm = this.fb.group({
-      nom: ['', Validators.required],
-      prenom: ['', Validators.required],
+      nom: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ '-]*$/)]],
+      prenom: ['', [Validators.required, Validators.pattern(/^[a-zA-ZÀ-ÿ '-]*$/)]],
       email: ['', [Validators.required, Validators.email]],
-      telephone: ['']
+      telephone: ['', [Validators.pattern(/^[0-9]*$/)]]
     });
   }
 
+  // Getters pour accéder facilement aux contrôles du formulaire
+  get nom() { return this.joueurForm.get('nom'); }
+  get prenom() { return this.joueurForm.get('prenom'); }
+  get email() { return this.joueurForm.get('email'); }
+  get telephone() { return this.joueurForm.get('telephone'); }
+
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
-    this.loadJoueurs();
     this.loadCurrentUserDetails();
+    this.loadJoueurs();
   }
 
   loadCurrentUserDetails(): void {
@@ -55,28 +61,29 @@ export class ChefEquipeComponent implements OnInit {
       .subscribe({
         next: (user) => {
           this.currentUser = user;
+          this.loadJoueurs();
         },
         error: (err) => console.error('Erreur lors du chargement des détails utilisateur', err)
       });
   }
 
   loadJoueurs(): void {
-    this.http.get<any[]>('http://localhost:8082/api/joueurs/sans-club').subscribe({
-      next: (joueursSansClub) => {
-        this.http.get<any[]>(`http://localhost:8082/api/joueurs/par-club?nomClub=${this.currentUser.nomClub}`).subscribe({
-          next: (joueursClub) => {
-            const allJoueurs = [...joueursSansClub, ...joueursClub];
-            const uniqueJoueurs = allJoueurs.filter((joueur, index, self) =>
-              index === self.findIndex(j => j.id === joueur.id)
-            );
-            
-            this.joueurs = uniqueJoueurs;
-            this.filteredJoueurs = [...uniqueJoueurs];
-          },
-          error: (err) => console.error('Erreur lors du chargement des joueurs du club', err)
-        });
+    if (!this.currentUser?.nomClub) {
+      console.log('Nom du club non disponible, attente des détails utilisateur...');
+      return;
+    }
+
+    this.http.get<any[]>(`http://localhost:8082/api/joueurs/par-club?nomClub=${this.currentUser.nomClub}`).subscribe({
+      next: (joueursClub) => {
+        this.joueurs = joueursClub;
+        this.filteredJoueurs = [...joueursClub];
+        console.log('Joueurs chargés:', this.joueurs);
       },
-      error: (err) => console.error('Erreur lors du chargement des joueurs sans club', err)
+      error: (err) => {
+        console.error('Erreur lors du chargement des joueurs du club', err);
+        this.joueurs = [];
+        this.filteredJoueurs = [];
+      }
     });
   }
 
@@ -88,8 +95,8 @@ export class ChefEquipeComponent implements OnInit {
     
     const term = this.searchTerm.toLowerCase();
     this.filteredJoueurs = this.joueurs.filter(joueur => 
-      joueur.nom.toLowerCase().includes(term) || 
-      joueur.prenom.toLowerCase().includes(term)
+      joueur.nom?.toLowerCase().includes(term) || 
+      joueur.prenom?.toLowerCase().includes(term)
     );
   }
 
@@ -97,7 +104,7 @@ export class ChefEquipeComponent implements OnInit {
     if (this.joueurForm.valid) {
       const joueurData = {
         ...this.joueurForm.value,
-        chefEmail: this.currentUser.email // Ajout de l'email du chef d'équipe
+        chefEmail: this.currentUser.email
       };
 
       const endpoint = this.addMode === 'email' 

@@ -1,4 +1,12 @@
 <div class="register-container">
+  <!-- Alerte en haut de la page -->
+  <div class="alert-container" *ngIf="showAlert">
+    <div class="alert" [ngClass]="{'alert-success': alertType === 'success', 'alert-error': alertType === 'error'}">
+      {{ alertMessage }}
+      <button class="close-btn" (click)="showAlert = false">&times;</button>
+    </div>
+  </div>
+
   <div class="register-card">
     <div class="register-header">
       <img src="assets/images/logo-federation.png" alt="Logo Fédération" class="auth-logo">
@@ -14,7 +22,7 @@
         <input type="text" id="nom" formControlName="nom" placeholder="Votre nom" required>
         <i class="fas fa-user"></i>
         <div *ngIf="registerForm.get('nom')?.invalid && registerForm.get('nom')?.touched" class="error-message">
-          Le nom est requis
+          <span class="error-text">Le nom est requis</span>
         </div>
       </div>
 
@@ -23,7 +31,7 @@
         <input type="text" id="prenom" formControlName="prenom" placeholder="Votre prénom" required>
         <i class="fas fa-user"></i>
         <div *ngIf="registerForm.get('prenom')?.invalid && registerForm.get('prenom')?.touched" class="error-message">
-          Le prénom est requis
+          <span class="error-text">Le prénom est requis</span>
         </div>
       </div>
 
@@ -32,7 +40,7 @@
         <input type="email" id="email" formControlName="email" placeholder="club@example.com" required>
         <i class="fas fa-envelope"></i>
         <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
-          Veuillez entrer un email valide
+          <span class="error-text">Veuillez entrer un email valide</span>
         </div>
       </div>
 
@@ -43,7 +51,7 @@
         <i class="fas fa-lock"></i>
         <span class="toggle-password" (click)="togglePassword()" [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></span>
         <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">
-          Le mot de passe doit contenir au moins 6 caractères
+          <span class="error-text">Le mot de passe doit contenir au moins 6 caractères</span>
         </div>
       </div>
 
@@ -52,7 +60,7 @@
         <input [type]="showPassword ? 'text' : 'password'" id="confirmPassword" formControlName="confirmPassword" placeholder="••••••••" required>
         <i class="fas fa-lock"></i>
         <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched" class="error-message">
-          Les mots de passe ne correspondent pas
+          <span class="error-text">Les mots de passe ne correspondent pas</span>
         </div>
       </div>
 
@@ -62,7 +70,7 @@
         <input type="text" id="nomClub" formControlName="nomClub" placeholder="Ex: Club Olympique de Tunisie" required>
         <i class="fas fa-users"></i>
         <div *ngIf="registerForm.get('nomClub')?.invalid && registerForm.get('nomClub')?.touched" class="error-message">
-          Le nom du club est requis
+          <span class="error-text">Le nom du club est requis</span>
         </div>
       </div>
 
@@ -71,7 +79,7 @@
         <input type="text" id="adresseClub" formControlName="adresseClub" placeholder="Adresse officielle" required>
         <i class="fas fa-map-marker-alt"></i>
         <div *ngIf="registerForm.get('adresseClub')?.invalid && registerForm.get('adresseClub')?.touched" class="error-message">
-          L'adresse du club est requise
+          <span class="error-text">L'adresse du club est requise</span>
         </div>
       </div>
 
@@ -80,18 +88,21 @@
         <input type="tel" id="telephone" formControlName="telephone" placeholder="XX XXX XXX" required>
         <i class="fas fa-phone"></i>
         <div *ngIf="registerForm.get('telephone')?.invalid && registerForm.get('telephone')?.touched" class="error-message">
-          Veuillez entrer un numéro de téléphone valide (8 chiffres)
+          <span class="error-text">Veuillez entrer un numéro de téléphone valide (8 chiffres)</span>
         </div>
       </div>
 
-      <!-- Pièce jointe (optionnelle pour preuve) -->
+      <!-- Pièce jointe (obligatoire) -->
       <div class="form-group">
-        <label for="documentJustificatif">Document justificatif (PDF)</label>
-        <input type="file" id="documentJustificatif" (change)="onFileChange($event)" accept=".pdf">
-        <small>* Certificat d'affiliation ou document officiel du club</small>
+        <label for="documentJustificatif">Document justificatif (PDF) <span class="required-field">*</span></label>
+        <input type="file" id="documentJustificatif" (change)="onFileChange($event)" accept=".pdf" required>
+        <div *ngIf="!selectedFile && registerForm.get('documentJustificatif')?.touched" class="error-message">
+          <span class="error-text">Un document justificatif est requis</span>
+        </div>
+        <small>Certificat d'affiliation ou document officiel du club (PDF uniquement)</small>
       </div>
 
-      <button type="submit" class="submit-btn" [disabled]="registerForm.invalid || loading">
+      <button type="submit" class="submit-btn" [disabled]="registerForm.invalid || !selectedFile || loading">
         <span *ngIf="!loading">Soumettre la demande</span>
         <span *ngIf="loading" class="spinner"></span>
       </button>

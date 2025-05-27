@@ -1,38 +1,68 @@
 <div class="admin-container">
+  <!-- Conteneur des alertes -->
+  <div class="alert-container">
+    <div *ngIf="alertMessage" [ngClass]="'alert alert-' + alertType">
+      {{ alertMessage }}
+      <button class="close-btn" (click)="dismissAlert()">&times;</button>
+    </div>
+  </div>
+
   <div class="admin-header">
     <img src="assets/images/logo-federation.png" alt="Logo" class="admin-logo">
     <h1>Tableau de bord Administrateur</h1>
-    <button (click)="logout()" class="logout-btn">Déconnexion</button>
+    <button (click)="logout()" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </button>
   </div>
 
   <div class="admin-content">
     <!-- Section Statistiques -->
     <div class="stats-section">
-      <div class="stat-card">
-        <h3>Chefs validés</h3>
-        <p>{{ stats.chefsValides || 0 }}</p>
-      </div>
-      <div class="stat-card">
-        <h3>Clubs enregistrés</h3>
-        <p>{{ stats.clubsEnregistres || 0 }}</p>
-      </div>
-      <div class="stat-card">
-        <h3>En attente</h3>
-        <p>{{ filteredChefs.length || 0 }}</p>
+  <div class="stat-card">
+    <div class="circle-chart">
+      <div class="circle-progress" [style.background]="'conic-gradient(#28a745 ' + (stats.chefsValides || 0) * 100 / (stats.chefsValides + stats.clubsEnregistres + filteredChefs.length || 1) + '%, #e9ecef 0%)'">
+        <div class="circle-inner">
+          <h3><i class="fas fa-user-check"></i> Chefs validés</h3>
+          <p>{{ stats.chefsValides || 0 }}</p>
+        </div>
       </div>
     </div>
+  </div>
+  <div class="stat-card">
+    <div class="circle-chart">
+      <div class="circle-progress" [style.background]="'conic-gradient(#007bff ' + (stats.clubsEnregistres || 0) * 100 / (stats.chefsValides + stats.clubsEnregistres + filteredChefs.length || 1) + '%, #e9ecef 0%)'">
+        <div class="circle-inner">
+          <h3><i class="fas fa-chess-rook"></i> Clubs enregistrés</h3>
+          <p>{{ stats.clubsEnregistres || 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="circle-chart">
+      <div class="circle-progress" [style.background]="'conic-gradient(#ffc107 ' + (filteredChefs.length || 0) * 100 / (stats.chefsValides + stats.clubsEnregistres + filteredChefs.length || 1) + '%, #e9ecef 0%)'">
+        <div class="circle-inner">
+          <h3><i class="fas fa-clock"></i> En attente</h3>
+          <p>{{ filteredChefs.length || 0 }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Section Validation des chefs -->
     <div class="validation-section">
-      <h2>Validation des chefs de club</h2>
+      <h2><i class="fas fa-user-shield"></i> Validation des chefs de club</h2>
       <div class="search-wrapper">
         <input [(ngModel)]="searchTerm" placeholder="Rechercher par nom..." type="text" class="search-input" />
         <i class="fas fa-search search-icon"></i>
       </div>
 
-      <div *ngIf="loading" class="loading">Chargement en cours...</div>
+      <div *ngIf="loading" class="loading">
+        <i class="fas fa-spinner fa-spin"></i> Chargement en cours...
+      </div>
       <div *ngIf="!loading && filteredChefs.length === 0" class="no-data">
-        Aucun chef de club trouvé
+        <i class="fas fa-info-circle"></i> Aucun chef de club trouvé
       </div>
 
       <table *ngIf="!loading && filteredChefs.length > 0" class="chefs-table">
@@ -75,10 +105,10 @@
                 <button (click)="validerChef(chef.id)" class="btn-icon" title="Valider">
                   <i class="fas fa-check"></i>
                 </button>
-                <button (click)="rejeterChef(chef.id)" class="btn-icon" title="Rejeter">
+                <button (click)="rejeterChef(chef.id)" class="btn-icon btn-reject" title="Rejeter">
                   <i class="fas fa-times"></i>
                 </button>
-                <button (click)="modifierChef(chef)" class="btn-icon" title="Modifier">
+                <button (click)="modifierChef(chef)" class="btn-icon btn-edit" title="Modifier">
                   <i class="fas fa-edit"></i>
                 </button>
               </div>
@@ -90,59 +120,146 @@
 
     <!-- Section Dernières activités améliorée -->
     <div class="activity-section">
-      <h2>Dernières activités</h2>
+      <h2><i class="fas fa-history"></i> Dernières activités</h2>
       <div class="activity-list">
-        <div *ngFor="let activity of lastActivities; let last = last" class="activity-item">
+        <div *ngFor="let activity of lastActivities; let last = last" class="activity-item" 
+             [ngClass]="{
+               'activity-validated': activity.action.includes('validé'),
+               'activity-rejected': activity.action.includes('rejeté'),
+               'activity-modified': activity.action.includes('modifié')
+             }">
           <div class="activity-content">
             <div class="activity-header">
-              <span class="activity-action">{{ activity.action }}</span>
+              <i class="fas" [ngClass]="{
+                'fa-check-circle': activity.action.includes('validé'),
+                'fa-times-circle': activity.action.includes('rejeté'),
+                'fa-edit': activity.action.includes('modifié')
+              }"></i>
+              <span class="activity-action">{{ activity.details }}</span>
               <span class="activity-time">{{ activity.timestamp | date:'medium' }}</span>
             </div>
-            <p class="activity-details">{{ activity.details }}</p>
+            <p class="activity-message">{{ activity.action }}</p>
           </div>
           <div *ngIf="!last" class="activity-divider"></div>
         </div>
       </div>
     </div>
 
-    <!-- Modal de modification -->
+    <!-- Modal de modification améliorée -->
     <div *ngIf="showEditModal" class="modal-overlay">
       <div class="modal-content">
-        <h2>Modifier le chef de club</h2>
-
-        <div class="form-group">
-          <label>Nom:</label>
-          <input [(ngModel)]="selectedChef.nom" type="text" />
+        <div class="modal-header">
+          <h2><i class="fas fa-user-edit"></i> Modifier le chef de club</h2>
+          <button class="close-modal" (click)="showEditModal = false">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
 
-        <div class="form-group">
-          <label>Prénom:</label>
-          <input [(ngModel)]="selectedChef.prenom" type="text" />
-        </div>
+        <form #editForm="ngForm" class="edit-form" (ngSubmit)="saveModifications()">
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Nom:</label>
+            <div class="input-with-icon">
+              <i class="fas fa-user"></i>
+              <input [(ngModel)]="selectedChef.nom" type="text" name="nom" required 
+                     pattern="[a-zA-ZÀ-ÿ\s\-']*" #nomInput="ngModel" />
+              <div *ngIf="nomInput.invalid && (nomInput.dirty || nomInput.touched)" class="error-message">
+                Le nom ne doit contenir que des lettres
+              </div>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>Email:</label>
-          <input [(ngModel)]="selectedChef.email" type="email" />
-        </div>
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Prénom:</label>
+            <div class="input-with-icon">
+              <i class="fas fa-user"></i>
+              <input [(ngModel)]="selectedChef.prenom" type="text" name="prenom" required 
+                     pattern="[a-zA-ZÀ-ÿ\s\-']*" #prenomInput="ngModel" />
+              <div *ngIf="prenomInput.invalid && (prenomInput.dirty || prenomInput.touched)" class="error-message">
+                Le prénom ne doit contenir que des lettres
+              </div>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>Téléphone:</label>
-          <input [(ngModel)]="selectedChef.telephone" type="tel" />
-        </div>
+          <div class="form-group">
+            <label><i class="fas fa-envelope"></i> Email:</label>
+            <div class="input-with-icon">
+              <i class="fas fa-envelope"></i>
+              <input [(ngModel)]="selectedChef.email" type="email" name="email" required #emailInput="ngModel" />
+              <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
+                Veuillez entrer un email valide
+              </div>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>Nom du Club:</label>
-          <input [(ngModel)]="selectedChef.nomClub" type="text" />
-        </div>
+          <div class="form-group">
+            <label><i class="fas fa-phone"></i> Téléphone:</label>
+            <div class="input-with-icon">
+              <div *ngIf="telInput.invalid && (telInput.dirty || telInput.touched)" class="error-message">
+                Le téléphone ne doit contenir que des chiffres
+              </div>
+              <i class="fas fa-phone"></i>
+              <input [(ngModel)]="selectedChef.telephone" type="tel" name="telephone" 
+                     pattern="[0-9]*" #telInput="ngModel" />
+            </div>
+          </div>
 
+          <div class="form-group">
+            <label><i class="fas fa-chess-rook"></i> Nom du Club:</label>
+            <div class="input-with-icon">
+              <i class="fas fa-chess-rook"></i>
+              <input [(ngModel)]="selectedChef.nomClub" type="text" name="nomClub" 
+                     pattern="[a-zA-ZÀ-ÿ0-9\s\-']*" #clubInput="ngModel" />
+              <div *ngIf="clubInput.invalid && (clubInput.dirty || clubInput.touched)" class="error-message">
+                Nom de club invalide
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label><i class="fas fa-map-marker-alt"></i> Adresse du Club:</label>
+            <div class="input-with-icon">
+              <i class="fas fa-map-marker-alt"></i>
+              <input [(ngModel)]="selectedChef.adresseClub" type="text" name="adresseClub" 
+                     #adresseInput="ngModel" />
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" (click)="showEditModal = false" class="btn-cancel">
+              <i class="fas fa-times"></i> Annuler
+            </button>
+            <button type="submit" class="btn-save" [disabled]="editForm.invalid">
+              <i class="fas fa-save"></i> Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmation de rejet amélioré -->
+    <div *ngIf="showRejectConfirm" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2><i class="fas fa-exclamation-triangle"></i> Confirmer le rejet</h2>
+          <button class="close-modal" (click)="cancelReject()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        
+        <p>Êtes-vous sûr de vouloir rejeter ce chef de club ?</p>
+        
         <div class="form-group">
-          <label>Adresse du Club:</label>
-          <input [(ngModel)]="selectedChef.adresseClub" type="text" />
+          <label><i class="fas fa-comment-alt"></i> Message (optionnel):</label>
+          <textarea [(ngModel)]="rejectMessage" placeholder="Raison du rejet..."></textarea>
         </div>
 
         <div class="modal-actions">
-          <button (click)="showEditModal = false" class="btn-cancel">Annuler</button>
-          <button (click)="saveModifications()" class="btn-save">Enregistrer</button>
+          <button (click)="cancelReject()" class="btn-cancel">
+            <i class="fas fa-times"></i> Annuler
+          </button>
+          <button (click)="confirmReject()" class="btn-reject">
+            <i class="fas fa-trash-alt"></i> Confirmer le rejet
+          </button>
         </div>
       </div>
     </div>
