@@ -404,3 +404,74 @@
   border-radius: 5px;
   padding: 6px 10px;
 }
+/* Styles améliorés pour la section Dernières activités */
+.activity-section {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.activity-section h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.activity-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.activity-item {
+  padding: 12px 0;
+}
+
+.activity-content {
+  padding: 0 10px;
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.activity-action {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 15px;
+}
+
+.activity-time {
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.activity-details {
+  margin: 0;
+  color: #495057;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.activity-divider {
+  height: 1px;
+  background-color: #e9ecef;
+  margin: 10px 0;
+}
+
+/* Animation pour la dernière activité */
+.activity-item:first-child {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.activity-item:first-child .activity-action {
+  color: #28a745;
+}

@@ -243,4 +243,7 @@ export class ResultatsComponent implements OnInit {
     if (this.filteredResultats.length === 0) return 0;
     return Math.max(...this.filteredResultats.map(r => r.points));
   }
+  ajouterPiscine(): void {
+    this.router.navigate(['/admin/historique']);
+  }
 }

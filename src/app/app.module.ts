@@ -5,7 +5,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { AppRoutingModule } from './app-routing.module';
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -31,6 +32,7 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { HasRoleDirective } from './directives/has-role.directive';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { HistoriqueComponent } from './components/ResultatsC/historique/historique.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
     ResetPasswordComponent,
     AdminComponent,
     HasRoleDirective,
-    UnauthorizedComponent
+    UnauthorizedComponent,
+    HistoriqueComponent
      // optionnel ici si déjà déclaré dans AdminModule
   ],
   imports: [
@@ -66,7 +69,8 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
     ReactiveFormsModule, // pour formGroup
     RouterModule, // pour routerLink
     AppRoutingModule,
-    
+    MatTableModule,
+    MatPaginatorModule,
     
   ],
   providers: [

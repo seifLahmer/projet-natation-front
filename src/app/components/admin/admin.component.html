@@ -139,12 +139,19 @@
     <router-outlet></router-outlet>
   </div>
   <!-- Section Dernières activités -->
+  <!-- Section Dernières activités améliorée -->
   <div class="activity-section">
     <h2>Dernières activités</h2>
     <div class="activity-list">
-      <div *ngFor="let activity of lastActivities" class="activity-item">
-      
-        <p><strong>{{ activity.action }}</strong></p>
+      <div *ngFor="let activity of lastActivities; let last = last" class="activity-item">
+        <div class="activity-content">
+          <div class="activity-header">
+            <span class="activity-action">{{ activity.action }}</span>
+            <span class="activity-time">{{ activity.timestamp | date:'medium' }}</span>
+          </div>
+          <p class="activity-details">{{ activity.details }}</p>
+        </div>
+        <div *ngIf="!last" class="activity-divider"></div>
       </div>
     </div>
   </div>
