@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/services/_services/auth.service';
 })
 export class AdminComponent implements OnInit, OnDestroy {
   chefsEnAttente: any[] = [];
+  filteredChefs: any[] = [];
   lastActivities: any[] = [];
   showEditModal = false;
   selectedChef: any = null;
@@ -38,17 +39,14 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.routerSubscription = this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event) => {
-      // Pour routes plates : vérifier si on est exactement sur /admin
       this.isChildRouteActive = event.url !== '/admin';
       
-      // Charger les données seulement si on est sur la page principale admin
       if (event.url === '/admin') {
         this.loadChefsEnAttente();
         this.loadStats();
       }
     });
     
-    // Chargement initial seulement si on est sur /admin
     if (this.router.url === '/admin') {
       this.loadChefsEnAttente();
       this.loadStats();
@@ -67,14 +65,31 @@ export class AdminComponent implements OnInit, OnDestroy {
                         `http://localhost:8082${chef.documentPath}` : 
                         null
           }));
+          this.filteredChefs = [...this.chefsEnAttente]; // Initialisation des chefs filtrés
           this.loading = false;
         },
         error: (err) => {
           console.error('Erreur:', err);
           this.loading = false;
           this.chefsEnAttente = [];
+          this.filteredChefs = [];
         }
       });
+  }
+
+  // Méthode pour filtrer les chefs par nom
+  filterChefs(): void {
+    if (!this.searchTerm) {
+      this.filteredChefs = [...this.chefsEnAttente];
+      return;
+    }
+
+    const term = this.searchTerm.toLowerCase();
+    this.filteredChefs = this.chefsEnAttente.filter(chef => 
+      chef.nom.toLowerCase().includes(term) || 
+      chef.prenom.toLowerCase().includes(term) ||
+      (chef.nom + ' ' + chef.prenom).toLowerCase().includes(term)
+    );
   }
 
   loadStats(): void {
@@ -159,6 +174,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.routerSubscription.unsubscribe();
     }
   }
+
   loadLastActivities(): void {
     this.http.get<any[]>('http://localhost:8082/api/admin/activities')
       .subscribe({

@@ -70,15 +70,20 @@
       <div class="validation-section">
         <h2>Validation des chefs de club</h2>
         <div class="search-wrapper">
-          <input [(ngModel)]="searchTerm" placeholder="Rechercher par nom..." type="text" class="search-input" />
-          <i class="fas fa-search search-icon"></i>  </div>
+          <input [(ngModel)]="searchTerm" 
+                 (input)="filterChefs()" 
+                 placeholder="Rechercher par nom..." 
+                 type="text" 
+                 class="search-input" />
+          <i class="fas fa-search search-icon"></i>
+        </div>
         <div *ngIf="loading" class="loading">Chargement en cours...</div>
 
-        <div *ngIf="!loading && chefsEnAttente.length === 0" class="no-data">
+        <div *ngIf="!loading && filteredChefs.length === 0" class="no-data">
           Aucun chef de club en attente de validation
         </div>
 
-        <table *ngIf="!loading && chefsEnAttente.length > 0" class="chefs-table">
+        <table *ngIf="!loading && filteredChefs.length > 0" class="chefs-table">
           <thead>
             <tr>
               <th>Nom</th>
@@ -94,7 +99,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let chef of chefsEnAttente">
+            <tr *ngFor="let chef of filteredChefs">
               <td>{{ chef.nom }}</td>
               <td>{{ chef.prenom }}</td>
               <td>{{ chef.email }}</td>
