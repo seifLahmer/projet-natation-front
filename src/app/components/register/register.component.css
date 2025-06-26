@@ -205,6 +205,10 @@ input[type="file"] {
 .error-message {
   margin-top: 5px;
 }
+.error-border {
+  border-color: #F44336 !important;
+}
+
 
 .error-text {
   color: #F44336; /* Rouge pour les messages d'erreur */

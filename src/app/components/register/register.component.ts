@@ -13,11 +13,12 @@ export class RegisterComponent {
   loading = false;
   showPassword = false;
   selectedFile: File | null = null;
+  emailExistsError = false;
   
   // Variables pour les messages d'alerte
   showAlert = false;
   alertMessage = '';
-  alertType = ''; // 'success' ou 'error'
+  alertType = '';
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +36,13 @@ export class RegisterComponent {
       adresseClub: ['', Validators.required],
       documentJustificatif: [null, Validators.required]
     }, { validator: this.passwordMatchValidator });
+
+    this.registerForm.get('email')?.valueChanges.subscribe(() => {
+      this.emailExistsError = false;
+      if (this.registerForm.get('email')?.hasError('emailExists')) {
+        this.registerForm.get('email')?.setErrors(null);
+      }
+    });
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -62,13 +70,14 @@ export class RegisterComponent {
     this.alertType = type;
     this.showAlert = true;
     
-    // Masquer l'alerte après 5 secondes
     setTimeout(() => {
       this.showAlert = false;
     }, 5000);
   }
 
   onSubmit(): void {
+    this.emailExistsError = false;
+
     if (this.registerForm.invalid || !this.selectedFile) {
       this.registerForm.markAllAsTouched();
       const errorMessage = !this.selectedFile 
@@ -89,7 +98,7 @@ export class RegisterComponent {
     formData.append('nomClub', this.registerForm.value.nomClub);
     formData.append('adresseClub', this.registerForm.value.adresseClub);
     formData.append('telephone', this.registerForm.value.telephone);
-    formData.append('documentJustificatif', this.selectedFile);
+    formData.append('documentJustificatif', this.selectedFile as File);
 
     this.http.post('http://localhost:8082/api/auth/register', formData)
       .subscribe({
@@ -97,7 +106,6 @@ export class RegisterComponent {
           this.loading = false;
           this.showAlertMessage(response.message || 'Inscription réussie! En attente de validation.', 'success');
           
-          // Redirection après 3 secondes
           setTimeout(() => {
             this.router.navigate(['/login'], {
               state: { 
@@ -109,14 +117,32 @@ export class RegisterComponent {
         },
         error: (err) => {
           this.loading = false;
-          console.error('Erreur:', err);
+          console.error('Erreur complète:', err); // Gardez ce log pour le débogage
+          
+          // Essayez d'accéder au message d'erreur de différentes manières
+          const errorResponse = err.error;
           let errorMessage = 'Une erreur est survenue lors de l\'inscription';
-          if (err.error?.error) {
-            errorMessage = err.error.error;
-          } else if (err.status === 400) {
-            errorMessage = 'Données invalides. Veuillez vérifier les informations saisies.';
+          
+          if (typeof errorResponse === 'string') {
+            // Si la réponse est une chaîne simple
+            errorMessage = errorResponse;
+          } else if (errorResponse?.message) {
+            // Si la réponse est un objet avec une propriété message
+            errorMessage = errorResponse.message;
+          } else if (Array.isArray(errorResponse)) {
+            // Si la réponse est un tableau
+            errorMessage = errorResponse.join(', ');
           }
-          this.showAlertMessage('Erreur: ' + errorMessage, 'error');
+
+          // Vérification spécifique pour les emails existants
+          if (errorMessage.toLowerCase().includes('email') || 
+              errorMessage.toLowerCase().includes('existe')) {
+            this.emailExistsError = true;
+            this.registerForm.get('email')?.setErrors({ emailExists: true });
+            errorMessage = 'Cet email est déjà utilisé. Veuillez utiliser un autre email.';
+          }
+
+          this.showAlertMessage(errorMessage, 'error');
         }
       });
   }

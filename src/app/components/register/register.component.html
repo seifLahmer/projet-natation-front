@@ -37,13 +37,17 @@
 
       <div class="form-group">
         <label for="email">Email professionnel</label>
-        <input type="email" id="email" formControlName="email" placeholder="club@example.com" required>
+        <input type="email" id="email" formControlName="email" placeholder="club@example.com" required
+               [ngClass]="{'error-border': emailExistsError}">
         <i class="fas fa-envelope"></i>
         <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
           <span class="error-text">Veuillez entrer un email valide</span>
         </div>
+        <!-- Message d'erreur pour email existant -->
+        <div *ngIf="emailExistsError" class="error-message">
+          <span class="error-text">Cet email est déjà utilisé. Veuillez utiliser un autre email.</span>
+        </div>
       </div>
-
       <!-- Mot de passe -->
       <div class="form-group password-group">
         <label for="password">Mot de passe</label>
