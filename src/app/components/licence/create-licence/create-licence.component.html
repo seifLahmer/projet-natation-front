@@ -1,0 +1,79 @@
+<div class="licence-form-container">
+  <h2 mat-dialog-title>{{isEdit ? 'Modifier la licence' : 'Créer une licence'}}</h2>
+  
+  <form [formGroup]="licenceForm" (ngSubmit)="onSubmit()" class="licence-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Nom du joueur</mat-label>
+        <input matInput formControlName="nomJoueur" readonly>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Prénom du joueur</mat-label>
+        <input matInput formControlName="prenomJoueur" readonly>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" readonly>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Téléphone</mat-label>
+        <input matInput formControlName="telephone" readonly>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Club</mat-label>
+        <input matInput formControlName="club" readonly>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Catégorie</mat-label>
+        <mat-select formControlName="categorie" required>
+          <mat-option *ngFor="let cat of categories" [value]="cat">
+            {{cat}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="licenceForm.get('categorie')?.hasError('required')">
+          La catégorie est requise
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Niveau</mat-label>
+        <mat-select formControlName="niveau" required>
+          <mat-option *ngFor="let niv of niveaux" [value]="niv">
+            {{niv}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="licenceForm.get('niveau')?.hasError('required')">
+          Le niveau est requis
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date d'expiration</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="dateExpiration" [min]="minDate" required>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="licenceForm.get('dateExpiration')?.hasError('required')">
+          La date d'expiration est requise
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
+</div>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Annuler</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!licenceForm.valid">
+    {{isEdit ? 'Mettre à jour' : 'Créer la licence'}}
+  </button>
+</mat-dialog-actions> 

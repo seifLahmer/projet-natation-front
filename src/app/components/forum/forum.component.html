@@ -1,0 +1,73 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center mb-4">🎯 Forum Threads</h2>
+
+            <!-- Create new thread -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="New thread title"
+                            [(ngModel)]="newThreadTitle">
+                        <button class="btn btn-outline-primary" (click)="createThread()">
+                            <i class="bi bi-plus-lg"></i> Create
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- List threads -->
+            <div class="list-group mb-4 shadow-sm">
+                <button *ngFor="let thread of threads" class="list-group-item list-group-item-action"
+                    (click)="selectThread(thread)">
+                    🧵 {{ thread.title }}
+                </button>
+            </div>
+
+            <!-- Selected thread details -->
+            <div *ngIf="selectedThread" class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="mb-3">📌 Posts in "<span class="text-primary">{{ selectedThread.title }}</span>"</h4>
+
+                    <!-- New post input -->
+                    <div class="mb-4">
+                        <textarea class="form-control" placeholder="Write a new post..." rows="3"
+                            [(ngModel)]="newPostContent"></textarea>
+                        <div class="text-end mt-2">
+                            <button class="btn btn-success" (click)="createPost()">
+                                <i class="bi bi-send"></i> Post
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- List posts -->
+                    <div *ngFor="let post of posts" class="card mb-3 border-start border-4 border-success shadow-sm">
+                        <div class="card-body">
+                            <p>{{ post.content }}</p>
+                            <button class="btn btn-sm btn-outline-primary" (click)="loadComments(post.id!)">
+                                💬 Show Comments
+                            </button>
+
+                            <!-- Comments section -->
+                            <div *ngIf="selectedPostId === post.id" class="mt-3">
+                                <ul class="list-group mb-2">
+                                    <li *ngFor="let comment of comments" class="list-group-item">
+                                        🗨️ {{ comment.content }}
+                                    </li>
+                                </ul>
+                                <div class="input-group">
+                                    <input class="form-control" placeholder="Write a comment..."
+                                        [(ngModel)]="newCommentContent">
+                                    <button class="btn btn-outline-secondary" (click)="createComment()">Reply</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+  

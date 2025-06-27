@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Tête -->
+  <circle cx="40" cy="25" r="12" fill="#0066cc"/>
+  
+  <!-- Corps -->
+  <path d="M25 45C35 35 45 35 55 45L50 60C40 50 40 50 30 60L25 45Z" fill="#0066cc"/>
+  
+  <!-- Bras -->
+  <path d="M20 40C30 30 35 35 40 40" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+  <path d="M60 40C50 30 45 35 40 40" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Jambes -->
+  <path d="M30 60C35 65 40 65 45 60" stroke="#0066cc" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Vagues -->
+  <path d="M15 50Q25 45 35 50Q45 55 55 50Q65 45 75 50" stroke="#0066cc" stroke-width="2" fill="none"/>
+  <path d="M5 55Q15 50 25 55Q35 60 45 55Q55 50 65 55" stroke="#0066cc" stroke-width="2" fill="none"/>
+</svg> 

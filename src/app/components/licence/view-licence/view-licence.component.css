@@ -1,0 +1,229 @@
+.licence-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 102, 204, 0.15);
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif;
+  border: 1px solid #e0f0ff;
+  position: relative;
+  overflow: hidden;
+}
+
+.licence-header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #0066cc;
+  position: relative;
+}
+
+.licence-header h2 {
+  color: #0066cc;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.licence-id {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 14px;
+  color: #0066cc;
+  font-family: 'Roboto Mono', monospace;
+  background: #f0f7ff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #cce4ff;
+}
+
+.licence-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.photo-section {
+  width: 120px;
+  height: 120px;
+  background: #f0f7ff;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #0066cc;
+}
+
+.swimmer-photo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.info-group {
+  background: #f8faff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e0f0ff;
+  transition: all 0.3s ease;
+}
+
+.info-group:hover {
+  background: #f0f7ff;
+  border-color: #cce4ff;
+  transform: translateY(-1px);
+}
+
+.info-group label {
+  font-size: 12px;
+  color: #0066cc;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: block;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.club-info {
+  grid-column: 1 / -1;
+}
+
+.licence-footer {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #e0f0ff;
+}
+
+.barcode {
+  text-align: center;
+}
+
+.barcode-lines {
+  height: 40px;
+  background: repeating-linear-gradient(
+    90deg,
+    #000,
+    #000 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  margin: 0 auto 8px;
+  max-width: 280px;
+  border-radius: 4px;
+}
+
+.barcode-number {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e0f0ff;
+}
+
+button {
+  background: #0066cc;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #0052a3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+.action-buttons {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.action-buttons button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-buttons .edit-btn {
+  color: #0066cc;
+}
+
+.action-buttons .delete-btn {
+  color: #dc3545;
+}
+
+.action-buttons button:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.action-buttons .edit-btn:hover {
+  color: #0052a3;
+}
+
+.action-buttons .delete-btn:hover {
+  color: #bd2130;
+}
+
+@media (max-width: 500px) {
+  .licence-content {
+    grid-template-columns: 1fr;
+  }
+
+  .photo-section {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+  }
+
+  .info-row {
+    grid-template-columns: 1fr;
+  }
+} 

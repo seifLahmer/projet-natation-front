@@ -1,16 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy ,ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { Router, NavigationEnd, Event } from '@angular/router';
+import { Router, NavigationEnd, Event, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/_services/auth.service';
-
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgForm } from '@angular/forms';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
-  providers: [DatePipe]
+  providers: [DatePipe],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule
+  ]
 })
 export class AdminComponent implements OnInit, OnDestroy {
   chefsEnAttente: any[] = [];
@@ -23,7 +31,18 @@ export class AdminComponent implements OnInit, OnDestroy {
     chefsValides: 0,
     clubsEnregistres: 0
   };
-  loading = false;
+  loading = true;
+  // Propriétés pour les alertes
+  alertMessage: string = '';
+  alertType: string = 'success';
+  alertTimeout: any;
+
+  // Propriétés pour le rejet
+  showRejectConfirm = false;
+  chefToReject: number | null = null;
+  rejectMessage = '';
+
+  @ViewChild('editForm') editForm!: NgForm;
   
   private routerSubscription!: Subscription;
   
@@ -55,24 +74,31 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
     this.loadLastActivities();
   }
+  get filteredChefs(): any[] {
+    if (!this.searchTerm) return this.chefsEnAttente;
+    return this.chefsEnAttente.filter(chef =>
+      chef.nom.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      chef.prenom.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      (chef.nomClub && chef.nomClub.toLowerCase().includes(this.searchTerm.toLowerCase()))
+    );
+  }
 
   loadChefsEnAttente(): void {
-    this.loading = true;
     this.http.get<any[]>('http://localhost:8082/api/admin/chefs-a-valider')
       .subscribe({
         next: (data) => {
           this.chefsEnAttente = data.map(chef => ({
             ...chef,
-            documentPath: chef.documentPath ? 
-                        `http://localhost:8082${chef.documentPath}` : 
-                        null
+            documentPath: chef.documentPath ?
+              `http://localhost:8082${chef.documentPath}` :
+              null
           }));
           this.loading = false;
         },
         error: (err) => {
           console.error('Erreur:', err);
           this.loading = false;
-          this.chefsEnAttente = [];
+          this.showAlert('Erreur lors du chargement des chefs', 'error');
         }
       });
   }
@@ -84,81 +110,12 @@ export class AdminComponent implements OnInit, OnDestroy {
           this.stats = data;
         },
         error: (err) => {
-          console.error('Erreur lors du chargement des statistiques:', err);
-          this.stats = {
-            chefsValides: 0,
-            clubsEnregistres: 0
-          };
+          console.error('Erreur:', err);
+          this.showAlert('Erreur lors du chargement des statistiques', 'error');
         }
       });
   }
 
-  validerChef(id: number): void {
-    this.http.post(`http://localhost:8082/api/admin/valider-chef/${id}`, {})
-      .subscribe({
-        next: () => {
-          alert('Chef validé avec succès');
-          this.loadChefsEnAttente();
-          this.loadStats();
-        },
-        error: (err) => {
-          console.error('Erreur lors de la validation:', err);
-          alert('Erreur lors de la validation');
-        }
-      });
-  }
-
-  rejeterChef(id: number): void {
-    if (confirm('Êtes-vous sûr de vouloir rejeter ce chef de club ?')) {
-      this.http.delete(`http://localhost:8082/api/admin/rejeter-chef/${id}`)
-        .subscribe({
-          next: () => {
-            alert('Chef rejeté avec succès');
-            this.loadChefsEnAttente();
-            this.loadStats();
-          },
-          error: (err) => {
-            console.error('Erreur lors du rejet:', err);
-            alert('Erreur lors du rejet');
-          }
-        });
-    }
-  }
-
-  modifierChef(chef: any): void {
-    this.selectedChef = {...chef};
-    this.showEditModal = true;
-  }
-
-  saveModifications(): void {
-    if (!this.selectedChef) {
-      alert('Aucun chef sélectionné');
-      return;
-    }
-    
-    this.http.put(`http://localhost:8082/api/admin/modifier-chef/${this.selectedChef.id}`, this.selectedChef)
-      .subscribe({
-        next: () => {
-          alert('Chef modifié avec succès');
-          this.loadChefsEnAttente();
-          this.showEditModal = false;
-        },
-        error: (err) => {
-          console.error('Erreur lors de la modification:', err);
-          alert('Erreur lors de la modification');
-        }
-      });
-  }
-
-  logout(): void {
-    this.authService.logout();
-  }
-  
-  ngOnDestroy() {
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
-  }
   loadLastActivities(): void {
     this.http.get<any[]>('http://localhost:8082/api/admin/activities')
       .subscribe({
@@ -167,7 +124,139 @@ export class AdminComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           console.error('Erreur:', err);
+          this.showAlert('Erreur lors du chargement des activités', 'error');
         }
       });
   }
+
+  validerChef(id: number): void {
+    this.http.post(`http://localhost:8082/api/admin/valider-chef/${id}`, {})
+      .subscribe({
+        next: () => {
+          this.showAlert('Chef validé avec succès', 'success');
+          this.loadChefsEnAttente();
+          this.loadStats();
+          this.loadLastActivities();
+        },
+        error: (err) => {
+          console.error('Erreur:', err);
+          this.showAlert('Erreur lors de la validation', 'error');
+        }
+      });
+  }
+
+  rejeterChef(id: number): void {
+    this.chefToReject = id;
+    this.showRejectConfirm = true;
+  }
+
+  confirmReject(): void {
+    if (this.chefToReject) {
+      const body = this.rejectMessage ? { message: this.rejectMessage } : {};
+      
+      this.http.delete(`http://localhost:8082/api/admin/rejeter-chef/${this.chefToReject}`, { body })
+        .subscribe({
+          next: () => {
+            this.showAlert('Chef rejeté avec succès', 'error');
+            this.loadChefsEnAttente();
+            this.loadStats();
+            this.loadLastActivities();
+          },
+          error: (err) => {
+            console.error('Erreur:', err);
+            this.showAlert('Erreur lors du rejet', 'error');
+          },
+          complete: () => {
+            this.cancelReject();
+          }
+        });
+    }
+  }
+
+  cancelReject(): void {
+    this.showRejectConfirm = false;
+    this.chefToReject = null;
+    this.rejectMessage = '';
+  }
+
+  modifierChef(chef: any): void {
+    this.selectedChef = { ...chef };
+    this.showEditModal = true;
+  }
+
+  saveModifications(): void {
+    if (this.editForm.invalid) {
+      this.showAlert('Veuillez corriger les erreurs dans le formulaire', 'error');
+      return;
+    }
+
+    if (!this.isValidText(this.selectedChef.nom)) {
+      this.showAlert('Le nom ne doit contenir que des lettres', 'error');
+      return;
+    }
+
+    if (!this.isValidText(this.selectedChef.prenom)) {
+      this.showAlert('Le prénom ne doit contenir que des lettres', 'error');
+      return;
+    }
+
+    if (this.selectedChef.nomClub && !this.isValidClubName(this.selectedChef.nomClub)) {
+      this.showAlert('Le nom du club contient des caractères invalides', 'error');
+      return;
+    }
+
+    this.http.put(`http://localhost:8082/api/admin/modifier-chef/${this.selectedChef.id}`, this.selectedChef)
+      .subscribe({
+        next: () => {
+          this.showAlert('Chef modifié avec succès', 'success');
+          this.loadChefsEnAttente();
+          this.loadStats();
+          this.loadLastActivities();
+          this.showEditModal = false;
+        },
+        error: (err) => {
+          console.error('Erreur:', err);
+          this.showAlert('Erreur lors de la modification', 'error');
+        }
+      });
+  }
+
+  private isValidText(text: string): boolean {
+    return /^[a-zA-ZÀ-ÿ\s\-']+$/.test(text);
+  }
+
+  private isValidClubName(name: string): boolean {
+    return /^[a-zA-ZÀ-ÿ0-9\s\-']+$/.test(name);
+  }
+
+  showAlert(message: string, type: string = 'success', duration: number = 5000): void {
+    this.alertMessage = message;
+    this.alertType = type;
+    
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+    }
+    
+    this.alertTimeout = setTimeout(() => {
+      this.dismissAlert();
+    }, duration);
+  }
+
+  dismissAlert(): void {
+    this.alertMessage = '';
+    if (this.alertTimeout) {
+      clearTimeout(this.alertTimeout);
+      this.alertTimeout = null;
+    }
+  }
+
+  logout(): void {
+    this.router.navigate(['/login']);
+  }
+  ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
+  
 }

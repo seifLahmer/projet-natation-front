@@ -42,9 +42,7 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: (response) => {
         this.loading = false;
-        // Stocker le token dans le authService
-      this.authService.saveToken(response.token);
-        // La redirection est gérée dans le AuthService
+        this.authService.saveToken(response.token);
       },
       error: (err) => {
         this.loading = false;

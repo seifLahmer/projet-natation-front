@@ -2,15 +2,20 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 import { AppRoutingModule } from './app-routing.module';
 
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './auth.interceptor';
 import { AppComponent } from './app.component';
 import { PiscineComponent } from './components/PiscineC/piscine/piscine.component';
 import { AjouterPComponent } from './components/PiscineC/ajouter-p/ajouter-p.component';
@@ -23,9 +28,6 @@ import { HeaderComponent } from './components/header/header.component';
 import { ResultatsComponent } from './components/ResultatsC/resultats/resultats.component';
 import { AjoutResultatComponent } from './components/ResultatsC/ajouter-resultat/ajouter-resultat.component';
 import { LoginComponent } from './components/login/login.component';
-import { AdminComponent } from './components/admin/admin.component';
-import { ChefEquipeComponent } from './components/chef-equipe/chef-equipe.component';
-import { JoueurComponent } from './components/joueur/joueur.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
@@ -33,6 +35,10 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { HasRoleDirective } from './directives/has-role.directive';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 import { HistoriqueComponent } from './components/ResultatsC/historique/historique.component';
+import { CreateLicenceComponent } from './components/licence/create-licence/create-licence.component';
+import { AuthInterceptor } from './auth.interceptor';
+import { ChefEquipeComponent } from './components/chef-equipe/chef-equipe.component';
+import { ForumComponent } from './components/forum/forum.component';
 
 @NgModule({
   declarations: [
@@ -50,15 +56,14 @@ import { HistoriqueComponent } from './components/ResultatsC/historique/historiq
     LoginComponent,
     DashboardComponent,
     RegisterComponent,
-    ChefEquipeComponent,
-    JoueurComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    AdminComponent,
     HasRoleDirective,
     UnauthorizedComponent,
-    HistoriqueComponent
+    HistoriqueComponent,
      // optionnel ici si déjà déclaré dans AdminModule
+    UnauthorizedComponent,
+     ForumComponent
   ],
   imports: [
     BrowserModule,
@@ -72,6 +77,14 @@ import { HistoriqueComponent } from './components/ResultatsC/historique/historiq
     MatTableModule,
     MatPaginatorModule,
     
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    ChefEquipeComponent,
+    CreateLicenceComponent
   ],
   providers: [
     {
@@ -79,7 +92,7 @@ import { HistoriqueComponent } from './components/ResultatsC/historique/historiq
       useClass: AuthInterceptor,
       multi: true
     }
-    ],
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
